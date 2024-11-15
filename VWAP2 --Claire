@@ -684,18 +684,18 @@ if barstate.islast
         if mergebool
             f_LevelMerge(pricearray, labelarray, weeklym_open, weeklym_label, WeeklyColor)
     if enablelastWeeklyLower
-        var lastWeeklyLower_line = line.new(x1=lastWeeklyStart, y1=lastWeeklyLower, x2=right_bar, y2=lastWeeklyLower, color=lastWeeklyColor,width=DEFAULT_LINE_WIDTH, style=linestyles)
-        var lastWeeklyLower_label = label.new(x=right_bar, y=lastWeeklyLower, text="pwval:"+ str.tostring(lastWeeklyLower, format_level ),color=label_color_setting,textcolor=#0c0c0c,style=label_style,xloc=xloc.bar_index)
+        var lastWeeklyLower_line = line.new(x1=lastWeeklyStart,y1=lastWeeklyLower,x2=right_bar,y2=lastWeeklyLower,color=lastWeeklyColor,width=DEFAULT_LINE_WIDTH, style=linestyles)
+        var lastWeeklyLower_label = label.new(x=right_bar, y=lastWeeklyLower,text="pwval:"+ str.tostring(lastWeeklyLower,format_level ),color=label_color_setting,textcolor=#0c0c0c,style=label_style,xloc=xloc.bar_index)
         if mergebool
             f_LevelMerge(pricearray,labelarray,lastWeeklyLower,lastWeeklyLower_label,lastWeeklyColor)
     if enablelastWeeklyUpper
-        var lastWeeklyUpper_line = line.new(x1=lastWeeklyStart, y1=lastWeeklyUpper, x2=right_bar,  y2=lastWeeklyUpper, color=lastWeeklyColor,width=DEFAULT_LINE_WIDTH,style=linestyles)
+        var lastWeeklyUpper_line = line.new(x1=lastWeeklyStart,y1=lastWeeklyUpper, x2=right_bar,y2=lastWeeklyUpper, color=lastWeeklyColor,width=DEFAULT_LINE_WIDTH,style=linestyles)
         var lastWeeklyUpper_label = label.new(x=right_bar, y=lastWeeklyUpper,text="pwvah:"+str.tostring(lastWeeklyUpper,format_level ),color=label_color_setting,textcolor=#0c0c0c,style=label_style,xloc=xloc.bar_index)
         if mergebool
             f_LevelMerge(pricearray,labelarray,lastWeeklyUpper,lastWeeklyUpper_label,lastWeeklyColor)
     if enablelastWeeklyPOC
         var lastWeeklyPOC_line = line.new(x1=lastWeeklyStart,x2=right_bar,y1=lastWeeklyPOC,y2=lastWeeklyPOC,color=lastWeeklyColor,width=DEFAULT_LINE_WIDTH,style=linestyles)
-        var lastWeeklyPOC_label = label.new(x=right_bar,y=lastWeeklyPOC, text="pwpoc:"+ str.tostring(lastlastWeeklyPOC,format_level ),color=label_color_setting,textcolor=#0c0c0c,style=label_style,xloc=xloc.bar_index)
+        var lastWeeklyPOC_label = label.new(x=right_bar,y=lastWeeklyPOC, text="pwpoc:"+ str.tostring(lastWeeklyPOC,format_level ),color=label_color_setting,textcolor=#0c0c0c,style=label_style,xloc=xloc.bar_index)
         if mergebool
             f_LevelMerge(pricearray,labelarray,lastWeeklyPOC,lastWeeklyPOC_label,lastWeeklyColor)
     if enablelastlastWeeklyLower
