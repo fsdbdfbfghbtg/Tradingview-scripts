@@ -2,59 +2,89 @@
 indicator(title="VWAP2 --Claire", shorttitle="VWAP--Claire", overlay=true)
 
 // 输入设置：用于隐藏VWAP的选项
-VWAP1_control = input(true, title="VWAP1", group="VWAP Controllers", inline="vwap_controls1", display = display.data_window)
+VWAP1_control = input(true,  title="VWAP1", group="VWAP Controllers", inline="vwap_controls1", display = display.data_window)
 VWAP2_control = input(false, title="VWAP2", group="VWAP Controllers", inline="vwap_controls1", display = display.data_window)
 VWAP3_control = input(false, title="VWAP3", group="VWAP Controllers", inline="vwap_controls1", display = display.data_window)
 VWAP4_control = input(false, title="VWAP4", group="VWAP Controllers", inline="vwap_controls1", display = display.data_window)
 
 // 输入设置：选择锚定周期
-var anchor1 = input.string(defval="Quarter",title="VWAP1",group="Anchor Period",inline="Anchor Period 1", options=["Day", "Week", "Month", "Quarter", "Year", "Decade"])
-var anchor2 = input.string(defval="Month",title="VWAP2",group="Anchor Period", inline="Anchor Period 1", options=["Day", "Week", "Month", "Quarter", "Year", "Decade"])
-var anchor3 = input.string(defval="Week",title="VWAP3",group="Anchor Period", inline="Anchor Period 2", options=["Day", "Week", "Month", "Quarter", "Year", "Decade"])
-var anchor4 = input.string(defval="Day",title="VWAP4",group="Anchor Period", inline="Anchor Period 2", options=["Day", "Week", "Month", "Quarter", "Year", "Decade"])
+var anchor1 = input.string(defval="Quarter", title="VWAP1",  group="Anchor Period",inline="Anchor Period 1", options=["Day", "Week", "Month", "Quarter", "Year", "Decade"])
+var anchor2 = input.string(defval="Month",   title="VWAP2",  group="Anchor Period", inline="Anchor Period 1", options=["Day", "Week", "Month", "Quarter", "Year", "Decade"])
+var anchor3 = input.string(defval="Week",    title="VWAP3",  group="Anchor Period", inline="Anchor Period 2", options=["Day", "Week", "Month", "Quarter", "Year", "Decade"])
+var anchor4 = input.string(defval="Day",     title="VWAP4",  group="Anchor Period", inline="Anchor Period 2", options=["Day", "Week", "Month", "Quarter", "Year", "Decade"])
 
 // 输入设置：选择数据源
-src1 = input(title = "S1", defval = hlc3, group="VWAP Source",inline="VWAP Source 1", display = display.data_window)
-src2 = input(title = "S2", defval = hlc3, group="VWAP Source",inline="VWAP Source 1", display = display.data_window)
-src3 = input(title = "S3", defval = hlc3, group="VWAP Source",inline="VWAP Source 2", display = display.data_window)
+src1 = input(title = "S1", defval = hlc3, group="VWAP Source", inline="VWAP Source 1", display = display.data_window)
+src2 = input(title = "S2", defval = hlc3, group="VWAP Source", inline="VWAP Source 1", display = display.data_window)
+src3 = input(title = "S3", defval = hlc3, group="VWAP Source", inline="VWAP Source 2", display = display.data_window)
 src4 = input(title = "S4", defval = hlc3, group="VWAP Source", inline="VWAP Source 2", display = display.data_window)
 
 // 波段设置分组
 BANDS_GROUP = "Bands Calculation Mode"
 CALC_MODE_TOOLTIP = "Determines the units used to calculate the distance of the bands. When 'Percentage' is selected, a multiplier of 1 means 1%. Standard Deviation = S  Percentage = P "
+
 // 波段计算模式的说明
 // Standard Deviation = S  Percentage = P
-Band_Calculation_Mode_1 = input.string("S", "VWAP1 Mode", options = ["S", "P"],inline = "band_1", group = BANDS_GROUP)
-Multiplier_1 = input.float(1.0, title = "Multiplier #1", group = BANDS_GROUP , inline = "band_1", step = 0.5, minval=0, display = display.data_window)
-Band_Calculation_Mode_2 = input.string("S","VWAP2 Mode",options = ["S", "P"], inline = "band_2", group = BANDS_GROUP)
-Multiplier_2 = input.float(1.0,title = "Multiplier #2", group = BANDS_GROUP, inline = "band_2", step = 0.5, minval=0, display = display.data_window)
-Band_Calculation_Mode_3 = input.string("S", "VWAP3 Mode", options = ["S", "P"],inline = "band_3", group = BANDS_GROUP)
-Multiplier_3 = input.float(1.0, title = "Multiplier #3", group = BANDS_GROUP, inline = "band_3",  step = 0.5, minval=0, display = display.data_window)
+Band_Calculation_Mode_1 = input.string("S", "VWAP1 Mode", options = ["S", "P"], inline = "band_1", group = BANDS_GROUP)
+Multiplier_1 = input.float(1.0, title = "Multiplier #1",  group = BANDS_GROUP , inline = "band_1", step = 0.5, minval=0, display = display.data_window)
+Band_Calculation_Mode_2 = input.string("S","VWAP2 Mode",  options = ["S", "P"], inline = "band_2", group = BANDS_GROUP)
+Multiplier_2 = input.float(1.0,title = "Multiplier #2",   group = BANDS_GROUP, inline = "band_2",  step = 0.5, minval=0, display = display.data_window)
+Band_Calculation_Mode_3 = input.string("S", "VWAP3 Mode", options = ["S", "P"],inline = "band_3",  group = BANDS_GROUP)
+Multiplier_3 = input.float(1.0, title = "Multiplier #3",  group = BANDS_GROUP, inline = "band_3",  step = 0.5, minval=0, display = display.data_window)
 Band_Calculation_Mode_4 = input.string("S", "VWAP4 Mode", options = ["S", "P"],inline = "band_4",  group = BANDS_GROUP, tooltip = CALC_MODE_TOOLTIP, display = display.data_window)
-Multiplier_4 = input.float(1.0, title = "Multiplier #4", group = BANDS_GROUP, inline = "band_4",  step = 0.5, minval=0, display = display.data_window)
+Multiplier_4 = input.float(1.0, title = "Multiplier #4",  group = BANDS_GROUP, inline = "band_4",  step = 0.5, minval=0, display = display.data_window)
 
 // 设置标签默认颜色
 var pricearray = array.new_float(0)
 var labelarray = array.new_label(0)
-label_color_setting = color.new(#fffdff, 80)
-line_color_setting = color.new(#0c3299, 10)
+
+// 设置全局label 颜色和透明度
+label_color_setting = input.color(title='Label Color',defval=color.rgb(255, 255, 255, 100), group='label_setting' ,inline="label_color_setting 1")
+label_text_color_setting = input.color(title='Label Text Color',defval=color.rgb(255, 255, 255), group='label_setting',inline="label_color_setting 1")
+label_text_font_size_input = input.int(3 , "Label Font Size", options=[1,2,3, 4,5],group='label_setting',inline="label_color_setting 1")
+// DEFAULT_EXTEND_RIGHT = input.int(70 ,title="Line Extension Length", minval=0, maxval=400, defval=100, group='label_setting',inline="label_color_setting 1")
+DEFAULT_EXTEND_RIGHT = 70
+
+// 通过自定义数据 更新变量
+label_text_font_size = size.normal
+if label_text_font_size_input == 1
+    label_text_font_size := size.tiny
+if label_text_font_size_input == 2
+    label_text_font_size := size.small
+if label_text_font_size_input == 3
+    label_text_font_size := size.normal
+if label_text_font_size_input == 4
+    label_text_font_size := size.large
+if label_text_font_size_input == 5
+    label_text_font_size := size.huge
+
+// 价格输出格式
+label_text_font_level = input.int(2, "Label Text Format Level",options=[1,2,3,4],group='label_setting',inline="label_color_setting 1")
+// 通过自定义数据 更新变量
+format_level = "#.##"
+if label_text_font_level == 1
+    format_level := "#.#"
+if label_text_font_level == 2
+    format_level := "#.##"
+if label_text_font_level == 3
+    format_level := "#.###"
+if label_text_font_level == 4
+    format_level := "#.####"
+
+
 linestyles = line.style_solid
 line_width = 1
-label_style = label.style_label_left
 right_bar = bar_index + 70
 // 添加一个布尔型输入来控制是否使用全局黑色标签文本颜色
 //global_black_text = input.bool(false,"Use Merge Black Text Color",inline = "1")
-// 价格输出格式
-format_level = "#.####"
+
 
 var DEFAULT_LABEL_STYLE = label.style_label_left
 // 函数：合并相同价格水平的标签
 mergebool = input.bool(defval=true, title='Merge?', inline='Display')
 // Merge Range
-mergerange = input.int(defval=100, title='Merge Range', minval=5, inline='Display',
-                       tooltip='Set the range to merge adjacent bars.\nSmaller values will produce more independent bars, while larger values will merge more bars.')
-radistance = 250
-global_black_text = true
+mergerange = input.int(defval=100,title='Merge Range',minval=5,inline='Display',tooltip='Set the range to merge adjacent bars.\nSmaller values will produce more independent bars, while larger values will merge more bars.')
+
 
 f_LevelMerge(pricearray, labelarray, currentprice, currentlabel, currentcolor) =>
     // 定义一个变量来跟踪是否找到合适的价格
@@ -72,11 +102,8 @@ f_LevelMerge(pricearray, labelarray, currentprice, currentlabel, currentcolor) =
                 label.set_text(labelhold, label.get_text(currentlabel) + ' / ' + whichtext)
                 // 清空 currentlabel 的文本
                 label.set_text(currentlabel, '')
-                // 设置合并后的标签颜色
-                if global_black_text
-                    label.set_textcolor(labelhold, color.black )
-                else
-                    label.set_textcolor(labelhold, currentcolor)
+                label.set_textcolor(labelhold, label_text_color_setting)
+
                 // 标记为已找到
                 found := true
                 break // 退出循环
@@ -91,7 +118,7 @@ get_limit_right(bars) =>
 
 var DEFAULT_LINE_WIDTH = line_width
 var DEFAULT_TAIL_WIDTH = line_width
-DEFAULT_EXTEND_RIGHT = 70
+
 // ------------------------------------------------------------------------------------------------------
 if barstate.islast and ta.cum(volume) == 0
     runtime.error("No volume is provided by the data vendor.")
@@ -184,68 +211,69 @@ if not timeframe.isdwm
 	Band4_lower := _vwap4 - bandBasis * Multiplier_4
 // ------------------------------------------------------------------------------------------------------
 // 使用函数来控制绘图
-vwap_plot1 = plot(VWAP1_control ? vwap1 : na, title="VWAP", color=color.rgb(17, 19, 17, 59))
-upperBand_1 = plot(VWAP1_control ? Band1_upper : na, title="Upper Band #1", color=color.rgb(17, 18, 17, 45))
-lowerBand_1 = plot(VWAP1_control ? Band1_lower : na, title="Lower Band #1", color=color.rgb(17, 18, 17, 45))
-fill(upperBand_1,lowerBand_1,color=color.rgb(164, 178, 164, 45),transp=90)
+vwap_plot1 = plot(VWAP1_control ? vwap1 : na, title="VWAP 1", color=color.rgb(17, 19, 17, 59))
+upperBand_1 = plot(VWAP1_control ? Band1_upper : na, title="Upper Band 1",color=color.rgb(17, 18, 17, 45))
+lowerBand_1 = plot(VWAP1_control ? Band1_lower : na, title="Lower Band 1",color=color.rgb(17, 18, 17, 45))
+fill(upperBand_1,lowerBand_1,color=color.rgb(164, 178, 164, 90), title="VWAP1 Area Color")
 
-vwap_plot2 = plot(VWAP2_control ? vwap2 : na,  color=color.rgb(17, 19, 17, 59))
-upperBand_2 = plot(VWAP2_control ? Band2_upper : na, color=color.rgb(17, 18, 17, 45))
-lowerBand_2 = plot(VWAP2_control ? Band2_lower : na, color=color.rgb(17, 18, 17, 45))
-fill(upperBand_2,lowerBand_2,color=color.rgb(164, 178, 164, 45),transp=90)
+vwap_plot2 = plot(VWAP2_control ? vwap2 : na,  title="VWAP 2", color=color.rgb(17, 19, 17, 59))
+upperBand_2 = plot(VWAP2_control ? Band2_upper : na, title="Upper Band 2",color=color.rgb(17, 18, 17, 45))
+lowerBand_2 = plot(VWAP2_control ? Band2_lower : na, title="Lower Band 2",color=color.rgb(17, 18, 17, 45))
+fill(upperBand_2,lowerBand_2,color=color.rgb(164, 178, 164, 90), title="VWAP2 Area Color")
 
-vwap_plot3 = plot(VWAP3_control ? vwap3 : na,  color=color.rgb(17, 19, 17, 59))
-upperBand_3 = plot(VWAP3_control ? Band3_upper : na, color=color.rgb(17, 18, 17, 45))
-lowerBand_3 = plot(VWAP3_control ? Band3_lower : na, color=color.rgb(17, 18, 17, 45))
-fill(upperBand_3,lowerBand_3,color=color.rgb(164, 178, 164, 45),transp=90)
+vwap_plot3 = plot(VWAP3_control ? vwap3 : na,title="VWAP 3",color=color.rgb(17, 19, 17, 59))
+upperBand_3 = plot(VWAP3_control ? Band3_upper : na,title="Upper Band 3",color=color.rgb(17, 18, 17, 45))
+lowerBand_3 = plot(VWAP3_control ? Band3_lower : na,title="Lower Band 3",color=color.rgb(17, 18, 17, 45))
+fill(upperBand_3,lowerBand_3,color=color.rgb(164, 178, 164, 90), title="VWAP3 Area Color")
 
-vwap_plot4 = plot(VWAP4_control ? vwap4 : na,  color=color.rgb(17, 19, 17, 59))
-upperBand_4 = plot(VWAP4_control ? Band4_upper : na, color=color.rgb(17, 18, 17, 45))
-lowerBand_4 = plot(VWAP4_control ? Band4_lower : na, color=color.rgb(17, 18, 17, 45))
-fill(upperBand_4,lowerBand_4,color=color.rgb(164, 178, 164, 45),transp=90)
-labelsize = 'Medium'
-linestyle =  'Dashed'
+vwap_plot4 = plot(VWAP4_control ? vwap4 : na, title="VWAP 4", color=color.rgb(17, 19, 17, 59))
+upperBand_4 = plot(VWAP4_control ? Band4_upper : na,title="Upper Band 4",color=color.rgb(17, 18, 17, 45))
+lowerBand_4 = plot(VWAP4_control ? Band4_lower : na,title="Lower Band 4",color=color.rgb(17, 18, 17, 45))
+fill(upperBand_4, lowerBand_4, color=color.rgb(164, 178, 164, 90), title="VWAP4 Area Color")
 
-[daily_time, daily_open] = request.security(syminfo.tickerid, 'D', [time, open], lookahead=barmerge.lookahead_on)
+//labelsize = 'Medium'
+linestyle = 'Dashed'
+
+[daily_time, daily_open]   = request.security(syminfo.tickerid, 'D', [time, open], lookahead=barmerge.lookahead_on)
 [dailyh_time, dailyh_open] = request.security(syminfo.tickerid, 'D', [time[1], high[1]], lookahead=barmerge.lookahead_on)
 [dailyl_time, dailyl_open] = request.security(syminfo.tickerid, 'D', [time[1], low[1]], lookahead=barmerge.lookahead_on)
 
 cdailyh_open = request.security(syminfo.tickerid, 'D', high, lookahead=barmerge.lookahead_on)
-cdailyl_open = request.security(syminfo.tickerid, 'D', low, lookahead=barmerge.lookahead_on)
+cdailyl_open = request.security(syminfo.tickerid, 'D', low,  lookahead=barmerge.lookahead_on)
 var monday_time = time
 var monday_high = high
 var monday_low = low
 
-[weekly_time, weekly_open] = request.security(syminfo.tickerid, 'W', [time, open], lookahead=barmerge.lookahead_on)
+[weekly_time, weekly_open]   = request.security(syminfo.tickerid, 'W', [time, open], lookahead=barmerge.lookahead_on)
 [weeklyh_time, weeklyh_open] = request.security(syminfo.tickerid, 'W', [time[1], high[1]], lookahead=barmerge.lookahead_on)
 [weeklyl_time, weeklyl_open] = request.security(syminfo.tickerid, 'W', [time[1], low[1]], lookahead=barmerge.lookahead_on)
 
-[monthly_time, monthly_open] = request.security(syminfo.tickerid, 'M', [time, open], lookahead=barmerge.lookahead_on)
+[monthly_time, monthly_open]   = request.security(syminfo.tickerid, 'M', [time, open], lookahead=barmerge.lookahead_on)
 [monthlyh_time, monthlyh_open] = request.security(syminfo.tickerid, 'M', [time[1], high[1]], lookahead=barmerge.lookahead_on)
 [monthlyl_time, monthlyl_open] = request.security(syminfo.tickerid, 'M', [time[1], low[1]], lookahead=barmerge.lookahead_on)
 
-[quarterly_time, quarterly_open] = request.security(syminfo.tickerid, '3M', [time, open], lookahead=barmerge.lookahead_on)
+[quarterly_time, quarterly_open]   = request.security(syminfo.tickerid, '3M', [time, open], lookahead=barmerge.lookahead_on)
 [quarterlyh_time, quarterlyh_open] = request.security(syminfo.tickerid, '3M', [time[1], high[1]], lookahead=barmerge.lookahead_on)
 [quarterlyl_time, quarterlyl_open] = request.security(syminfo.tickerid, '3M', [time[1], low[1]], lookahead=barmerge.lookahead_on)
 
-[yearly_time, yearly_open] = request.security(syminfo.tickerid, '12M', [time, open], lookahead=barmerge.lookahead_on)
+[yearly_time, yearly_open]   = request.security(syminfo.tickerid, '12M', [time, open], lookahead=barmerge.lookahead_on)
 [yearlyh_time, yearlyh_open] = request.security(syminfo.tickerid, '12M', [time, high], lookahead=barmerge.lookahead_on)
 [yearlyl_time, yearlyl_open] = request.security(syminfo.tickerid, '12M', [time, low], lookahead=barmerge.lookahead_on)
 
-[intra_time, intra_open] = request.security(syminfo.tickerid, '240', [time, open], lookahead=barmerge.lookahead_on)
+[intra_time, intra_open]   = request.security(syminfo.tickerid, '240', [time, open], lookahead=barmerge.lookahead_on)
 [intrah_time, intrah_open] = request.security(syminfo.tickerid, '240', [time[1], high[1]], lookahead=barmerge.lookahead_on)
-[intral_time, intral_open] = request.security(syminfo.tickerid, '240', [time[1], low[1]], lookahead=barmerge.lookahead_on)
+[intral_time, intral_open] = request.security(syminfo.tickerid, '240', [time[1], low[1]],  lookahead=barmerge.lookahead_on)
 
 //------------------------------------------------- Inputs ----------------------------------------------------------
 IntraColor = input.color(title='', defval=color.orange, group='4H', inline='4H')
 var is_intra_open_enabled = input.bool(defval=false, title='Open', group='4H', inline='4H')
 var is_intra_high_enabled = input.bool(defval=false, title='PH', group='4H', inline='4H')
-var is_intra_low_enabled = input.bool(defval=false, title='PL', group='4H', inline='4H')
-var is_intra_mid_enabled = input.bool(defval=false, title='PM', group='4H', inline='4H')
+var is_intra_low_enabled  = input.bool(defval=false, title='PL', group='4H', inline='4H')
+var is_intra_mid_enabled  = input.bool(defval=false, title='PM', group='4H', inline='4H')
 
 MondayColor = input.color(title='', defval=#08bcd4, group='monday range', inline='monday')
-var is_monday_enabled = input.bool(defval=true, title='Range',  group='monday range', inline='monday')
-var is_monday_mid = input.bool(defval=true, title='Mid', group='monday range', inline='monday')
+var is_monday_enabled = input.bool(defval=false,  title='Range',  group='monday range', inline='monday')
+var is_monday_mid = input.bool(defval=false, title='Mid', group='monday range', inline='monday')
 
 DailyColor = input.color(title='', defval=#08bcd4, group='daily', inline='daily')
 var is_daily_open_enabled = input.bool(defval=false, title='Open', group='daily', inline='daily')
@@ -259,16 +287,16 @@ var is_weekly_high_enabled = input.bool(defval=false, title='PH', group='weekly'
 var is_weekly_low_enabled = input.bool(defval=false, title='PL', group='weekly', inline='weekly')
 var is_weekly_mid_enabled = input.bool(defval=false, title='PM', group='weekly', inline='weekly')
 
-MonthlyColor = input.color(title='', defval=#08d48c, group='monthly', inline='monthly')
+MonthlyColor = input.color(title='',defval=#08d48c, group='monthly', inline='monthly')
 var is_monthly_open_enabled = input.bool(defval=false, title='Open', group='monthly', inline='monthly')
 var is_monthly_high_enabled = input.bool(defval=false, title='PH', group='monthly', inline='monthly')
 var is_monthly_low_enabled = input.bool(defval=false, title='PL', group='monthly', inline='monthly')
 var is_monthly_mid_enabled = input.bool(defval=false, title='PM', group='monthly', inline='monthly')
 
 quarterlyColor = input.color(title='', defval=color.red, group='quarterly', inline='quarterly')
-var is_quarterly_open_enabled = input.bool(defval=true, title='Open', group='quarterly', inline='quarterly')
-var is_quarterly_high_enabled = input.bool(defval=true, title='PH', group='quarterly', inline='quarterly')
-var is_quarterly_low_enabled = input.bool(defval=true, title='PL', group='quarterly', inline='quarterly')
+var is_quarterly_open_enabled = input.bool(defval=false,  title='Open', group='quarterly', inline='quarterly')
+var is_quarterly_high_enabled = input.bool(defval=false, title='PH', group='quarterly', inline='quarterly')
+var is_quarterly_low_enabled = input.bool(defval=false,  title='PL', group='quarterly', inline='quarterly')
 var is_quarterly_mid_enabled = input.bool(defval=false, title='PM', group='quarterly', inline='quarterly')
 
 YearlyColor = input.color(title='', defval=color.red, group='yearly', inline='yearly')
@@ -336,7 +364,7 @@ var int lastYearlyStart = na
 var float lastYearlyPOC = na
 lastYearlyColor = input.color(title='', defval=color.rgb(47, 233, 140), group='yearly', inline='yearly1')
 var bool enablelastYearlyLower = input.bool(false, title="pyval", group='yearly', inline='yearly1')
-var bool enablelastYearlyPOC = input.bool(false, title="pypoc", group='yearly', inline='yearly1')
+var bool enablelastYearlyPOC   = input.bool(false, title="pypoc", group='yearly', inline='yearly1')
 var bool enablelastYearlyUpper = input.bool(false, title="pyvah", group='yearly', inline='yearly1')
 
 var float lastlastYearlyLower = na
@@ -345,17 +373,17 @@ var int lastlastYearlyStart = na
 var float lastlastYearlyPOC = na
 lastlastYearlyColor = input.color(title='',defval=color.rgb(42, 203, 123, 54), group='yearly', inline='yearly2')
 var bool enablelastlastYearlyLower = input.bool(false, title="ppyval",group='yearly', inline='yearly2')
-var bool enablelastlastYearlyPOC = input.bool(false, title="ppypoc", group='yearly', inline='yearly2')
+var bool enablelastlastYearlyPOC   = input.bool(false, title="ppypoc", group='yearly', inline='yearly2')
 var bool enablelastlastYearlyUpper = input.bool(false, title="ppyvah",group='yearly', inline='yearly2')
 // ---------------------------------------------------------------------------------------------------------------------
 var float lastQuarterlyLower = na
 var float lastQuarterlyUpper = na
 var int lastQuarterlyStart = na
 var float lastQuarterlyPOC = na
-lastQuarterlyColor = input.color(title='',defval=color.rgb(207, 80, 41), group='quarterly', inline='quarterly1')
+lastQuarterlyColor = input.color(title='',defval=color.rgb(207, 80, 41),group='quarterly',inline='quarterly1')
 var bool enablelastQuarterlyLower = input.bool(false,title="pqval", group='quarterly', inline='quarterly1')
 var bool enablelastQuarterlyPOC = input.bool(false,  title="pqpoc", group='quarterly', inline='quarterly1')
-var bool enablelastQuarterlyUpper = input.bool(false,  title="pqvah", group='quarterly', inline='quarterly1')
+var bool enablelastQuarterlyUpper = input.bool(false,title="pqvah", group='quarterly', inline='quarterly1')
 
 var float lastlastQuarterlyLower = na
 var float lastlastQuarterlyUpper = na
@@ -363,7 +391,7 @@ var int lastlastQuarterlyStart = na
 var float lastlastQuarterlyPOC = na
 lastlastQuarterlyColor = input.color(title='', defval=color.rgb(190, 207, 41),group='quarterly',inline='quarterly2')
 var bool enablelastlastQuarterlyLower = input.bool(false,  title="ppqval",group='quarterly',inline='quarterly2')
-var bool enablelastlastQuarterlyPOC = input.bool(false,  title="ppqpoc",  group='quarterly', inline='quarterly2')
+var bool enablelastlastQuarterlyPOC   = input.bool(false,  title="ppqpoc",  group='quarterly', inline='quarterly2')
 var bool enablelastlastQuarterlyUpper = input.bool(false,  title="ppqvah",group='quarterly', inline='quarterly2')
 
 // ---------------------------------------------------------------------------------------------------------------------
@@ -371,25 +399,28 @@ var float lastMonthlyLower = na
 var float lastMonthlyUpper = na
 var int lastMonthlyStart = na
 var float lastMonthlyPOC = na
+
 lastMonthlyColor = input.color(title='',defval=color.rgb(0, 0, 0),  group='monthly', inline='monthly1')
 var bool enablelastMonthlyLower = input.bool(false,  title="pmval", group='monthly', inline='monthly1')
-var bool enablelastMonthlyPOC = input.bool(false,  title="pmpoc", group='monthly', inline='monthly1')
+var bool enablelastMonthlyPOC   = input.bool(false,  title="pmpoc", group='monthly',   inline='monthly1')
 var bool enablelastMonthlyUpper = input.bool(false,  title="pmvah", group='monthly', inline='monthly1')
 
 var float lastlastMonthlyLower = na
 var float lastlastMonthlyUpper = na
 var int lastlastMonthlyStart = na
 var float lastlastMonthlyPOC = na
+
 lastlastMonthlyColor = input.color(title='',defval=color.rgb(0, 0, 0),group='monthly',   inline='monthly2')
-var bool enablelastlastMonthlyLower = input.bool(false,  title="ppmval",group='monthly', inline='monthly2')
-var bool enablelastlastMonthlyPOC = input.bool(false,  title="ppmpoc",group='monthly',   inline='monthly2')
-var bool enablelastlastMonthlyUpper = input.bool(false,  title="ppmvah",group='monthly', inline='monthly2')
+var bool enablelastlastMonthlyLower = input.bool(false,title="ppmval",group='monthly', inline='monthly2')
+var bool enablelastlastMonthlyPOC = input.bool(false,title="ppmpoc",group='monthly',   inline='monthly2')
+var bool enablelastlastMonthlyUpper = input.bool(false,title="ppmvah",group='monthly', inline='monthly2')
 
 // ---------------------------------------------------------------------------------------------------------------------
 var float lastWeeklyLower = na
 var float lastWeeklyUpper = na
 var int lastWeeklyStart = na
 var float lastWeeklyPOC = na
+
 lastWeeklyColor = input.color(title='',defval=color.rgb(0, 0, 0),group='weekly', inline='weekly1')
 var bool enablelastWeeklyLower = input.bool(false, title="pwval",group='weekly', inline='weekly1')
 var bool enablelastWeeklyPOC = input.bool(false, title="pwpoc",group='weekly',   inline='weekly1')
@@ -399,6 +430,7 @@ var float lastlastWeeklyLower = na
 var float lastlastWeeklyUpper = na
 var int lastlastWeeklyStart = na
 var float lastlastWeeklyPOC = na
+
 lastlastWeeklyColor = input.color(title='',defval=color.rgb(0, 0, 0), group='weekly', inline='weekly2')
 var bool enablelastlastWeeklyLower = input.bool(false, title="ppwval",group='weekly', inline='weekly2')
 var bool enablelastlastWeeklyPOC = input.bool(false, title="ppwpoc",  group='weekly', inline='weekly2')
@@ -408,6 +440,7 @@ var float lastdailyLower = na
 var float lastdailyUpper = na
 var int lastdailyStart = na
 var float lastdailyPOC = na
+
 lastdailyColor = input.color(title='', defval=color.rgb(5, 11, 17),group='daily', inline='daily1')
 var bool enablelastdailyLower = input.bool(false, title="pdval",group='daily', inline='daily1')
 var bool enablelastdailyPOC   = input.bool(false, title="pdpoc",group='daily', inline='daily1')
@@ -484,24 +517,27 @@ var float currentyearlyPOC  = na
 var float currentyearlyUpper = na
 var float currentyearlyLower = na
 var int currentyearlyStart = na
+
 currentyearlyColor = input.color(title='',defval=color.rgb(0, 0, 0), group='yearly',inline='yearly3')
-var bool enablecurrentyearlyLower = input.bool(true, title="yval", group='yearly',inline='yearly3', tooltip="Check to enable the yearly lower price comparison")
-var bool enablecurrentyearlyPOC   = input.bool(true, title="ypoc", group='yearly',inline='yearly3', tooltip="Check to enable the yearly price comparison")
-var bool enablecurrentyearlyUpper = input.bool(true, title="yvah", group='yearly',inline='yearly3', tooltip="Check to enable the yearly upper price comparison")
+var bool enablecurrentyearlyLower = input.bool(false, title="yval", group='yearly',inline='yearly3', tooltip="Check to enable the yearly lower price comparison")
+var bool enablecurrentyearlyPOC   = input.bool(false, title="ypoc", group='yearly',inline='yearly3', tooltip="Check to enable the yearly price comparison")
+var bool enablecurrentyearlyUpper = input.bool(false,  title="yvah", group='yearly',inline='yearly3', tooltip="Check to enable the yearly upper price comparison")
 
 var float currentQuarterlyPOC   = na
 var float currentQuarterlyUpper = na
 var float currentQuarterlyLower = na
 var int currentQuarterlyStart   = na
+
 currentQuarterlyColor = input.color(title='',defval=color.rgb(0, 0, 0),group='quarterly',inline='quarterly3')
-var bool enablecurrentQuarterlyLower = input.bool(true, title="qval", group='quarterly',inline='quarterly3', tooltip="Check to enable the quarterly lower price comparison")
-var bool enablecurrentQuarterlyPOC   = input.bool(true, title="qpoc",group='quarterly',inline='quarterly3',tooltip="Check to enable the quarterly price comparison")
-var bool enablecurrentQuarterlyUpper = input.bool(true, title="qvah",group='quarterly',inline='quarterly3', tooltip="Check to enable the quarterly upper price comparison")
+var bool enablecurrentQuarterlyLower = input.bool(false,  title="qval", group='quarterly',inline='quarterly3', tooltip="Check to enable the quarterly lower price comparison")
+var bool enablecurrentQuarterlyPOC   = input.bool(false,  title="qpoc",group='quarterly',inline='quarterly3',tooltip="Check to enable the quarterly price comparison")
+var bool enablecurrentQuarterlyUpper = input.bool(false, title="qvah",group='quarterly',inline='quarterly3', tooltip="Check to enable the quarterly upper price comparison")
 // ---------------------------------------------------------------------------------------------------------------------
 var float currentMonthlyPOC   = na
 var float currentMonthlyUpper = na
 var float currentMonthlyLower = na
 var int currentMonthlyStart   = na
+
 currentMonthlyColor = input.color(title='',defval=color.rgb(0, 0, 0),group='monthly', inline='monthly3')
 var bool enablecurrentMonthlyLower = input.bool(false, title="mval",group='monthly', inline='monthly3', tooltip="Check to enable the monthly lower price comparison")
 var bool enablecurrentMonthlyPOC = input.bool(false, title="mpoc",group='monthly', inline='monthly3',  tooltip="Check to enable the monthly price comparison")
@@ -521,9 +557,9 @@ var float currentDailyUpper = na
 var float currentDailyLower = na
 var int currentDailyStart   = na
 //currentDailyColor = input.color(title='',defval=color.rgb(0, 0, 0),group='daily', inline='daily')
-//var bool enablecurrentDailyLower = input.bool(true, title="dval",group='daily', inline='daily',tooltip="Check to enable thet daily lower price comparison")
-//var bool enablecurrentDailyPOC   = input.bool(true, title="dpoc",group='daily', inline='daily',tooltip="Check to enable the daily price comparison")
-//var bool enablecurrentDailyUpper = input.bool(true, title="dvah",group='daily', inline='daily', tooltip="Check to enable the daily upper price comparison")
+//var bool enablecurrentDailyLower = input.bool(false,  title="dval",group='daily', inline='daily',tooltip="Check to enable thet daily lower price comparison")
+//var bool enablecurrentDailyPOC   = input.bool(false,  title="dpoc",group='daily', inline='daily',tooltip="Check to enable the daily price comparison")
+//var bool enablecurrentDailyUpper = input.bool(false,  title="dvah",group='daily', inline='daily', tooltip="Check to enable the daily upper price comparison")
 
 //[yearlyVWAP, yearlyUpper, yearlyLower] = calcVWAP(src, timeframe.change("12M"))
 currentyearlyPOC  := yearlyVWAP
@@ -557,21 +593,21 @@ if barstate.islast
     if can_draw_intra
         intra_limit_right = get_limit_right(DEFAULT_EXTEND_RIGHT)
         var intra_line = line.new(x1=intra_time, x2=intra_limit_right, y1=intra_open, y2=intra_open, color=IntraColor,width=DEFAULT_LINE_WIDTH,xloc=xloc.bar_time,style=linestyles)
-        var intra_label = label.new(x=intra_limit_right, y=intra_open, text=iotext+ ": "+ str.tostring(intra_open, format_level ),style=DEFAULT_LABEL_STYLE,color=label_color_setting,textcolor=IntraColor,xloc=xloc.bar_time)
+        var intra_label = label.new(x=intra_limit_right, y=intra_open, text=iotext+ ": "+ str.tostring(intra_open, format_level ) ,color=label_color_setting, textcolor=label_text_color_setting, size=label_text_font_size, style=DEFAULT_LABEL_STYLE,xloc=xloc.bar_time)
         if mergebool
             f_LevelMerge(pricearray, labelarray, intra_open, intra_label, IntraColor)
 
     if can_draw_intrah
         intrah_limit_right = get_limit_right(DEFAULT_EXTEND_RIGHT)
         var intrah_line = line.new(x1=intrah_time, x2=intrah_limit_right, y1=intrah_open, y2=intrah_open, color=IntraColor, width=DEFAULT_LINE_WIDTH, xloc=xloc.bar_time,style=linestyles)
-        var intrah_label = label.new(x=intrah_limit_right, y=intrah_open, text=pihtext+ ": " + str.tostring(intrah_open, format_level ),color=label_color_setting,style=DEFAULT_LABEL_STYLE,textcolor=IntraColor,xloc=xloc.bar_time)
+        var intrah_label = label.new(x=intrah_limit_right, y=intrah_open, text=pihtext+ ": " + str.tostring(intrah_open, format_level ), color=label_color_setting, textcolor=label_text_color_setting, size=label_text_font_size, style=DEFAULT_LABEL_STYLE,xloc=xloc.bar_time)
         if mergebool
             f_LevelMerge(pricearray, labelarray, intrah_open, intrah_label, IntraColor)
 
     if can_draw_intral
         intral_limit_right = get_limit_right(DEFAULT_EXTEND_RIGHT)
         var intral_line = line.new(x1=intral_time, x2=intral_limit_right, y1=intral_open, y2=intral_open, color=IntraColor, width=DEFAULT_LINE_WIDTH,xloc=xloc.bar_time,style=linestyles)
-        var intral_label = label.new(x=intral_limit_right, y=intral_open, text=piltext+ ": " + str.tostring(intral_open, format_level ),color=label_color_setting,style=DEFAULT_LABEL_STYLE,textcolor=IntraColor,xloc=xloc.bar_time)
+        var intral_label = label.new(x=intral_limit_right, y=intral_open, text=piltext+ ": " + str.tostring(intral_open, format_level ), color=label_color_setting, textcolor=label_text_color_setting, size=label_text_font_size, style=DEFAULT_LABEL_STYLE,xloc=xloc.bar_time)
         if mergebool
             f_LevelMerge(pricearray, labelarray, intral_open, intral_label, IntraColor)
 
@@ -580,7 +616,7 @@ if barstate.islast
         intram_time = intrah_time
         intram_open = (intral_open + intrah_open) / 2
         var intram_line = line.new(x1=intram_time, x2=intram_limit_right, y1=intram_open, y2=intram_open, color=IntraColor, width=DEFAULT_LINE_WIDTH,xloc=xloc.bar_time,style=linestyles)
-        var intram_label = label.new(x=intram_limit_right, y=intram_open,color=label_color_setting,  text=pimtext+ ": " + str.tostring(intram_open,format_level ),style=DEFAULT_LABEL_STYLE, textcolor=IntraColor,   xloc=xloc.bar_time)
+        var intram_label = label.new(x=intram_limit_right, y=intram_open,color=label_color_setting,  text=pimtext+ ": " + str.tostring(intram_open,format_level ), color=label_color_setting, textcolor=label_text_color_setting, size=label_text_font_size, style=DEFAULT_LABEL_STYLE,xloc=xloc.bar_time)
         if mergebool
             f_LevelMerge(pricearray, labelarray, intram_open, intram_label, IntraColor)
 
@@ -588,14 +624,14 @@ if barstate.islast
     if is_monday_enabled
         monday_limit_right = get_limit_right(DEFAULT_EXTEND_RIGHT)
         var monday_line = line.new(x1=monday_time, x2=monday_limit_right, y1=monday_high, y2=monday_high, color=MondayColor, width=DEFAULT_LINE_WIDTH, xloc=xloc.bar_time, style=linestyles)
-        var monday_label = label.new(x=monday_limit_right, y=monday_high,color=label_color_setting,  text=pmonhtext+ ": " + str.tostring(monday_high, format_level ), style=DEFAULT_LABEL_STYLE, textcolor=MondayColor,   xloc=xloc.bar_time)
+        var monday_label = label.new(x=monday_limit_right, y=monday_high,color=label_color_setting,  text=pmonhtext+ ": " + str.tostring(monday_high, format_level ), color=label_color_setting, textcolor=label_text_color_setting, size=label_text_font_size, style=DEFAULT_LABEL_STYLE,xloc=xloc.bar_time)
         if mergebool
             f_LevelMerge(pricearray, labelarray, monday_high, monday_label, MondayColor)
 
     if is_monday_enabled
         monday_limit_right = get_limit_right(DEFAULT_EXTEND_RIGHT)
         var monday_low_line = line.new(x1=monday_time, x2=monday_limit_right, y1=monday_low, y2=monday_low, color=MondayColor, width=DEFAULT_LINE_WIDTH, xloc=xloc.bar_time, style=linestyles)
-        var monday_low_label = label.new(x=monday_limit_right, y=monday_low, color=label_color_setting, text=pmonltext + ": " + str.tostring(monday_low, format_level ), style=DEFAULT_LABEL_STYLE, textcolor=MondayColor,   xloc=xloc.bar_time)
+        var monday_low_label = label.new(x=monday_limit_right, y=monday_low, color=label_color_setting, text=pmonltext + ": " + str.tostring(monday_low, format_level ), color=label_color_setting, textcolor=label_text_color_setting, size=label_text_font_size, style=DEFAULT_LABEL_STYLE,xloc=xloc.bar_time)
         if mergebool
             f_LevelMerge(pricearray, labelarray, monday_low, monday_low_label, MondayColor)
 
@@ -603,28 +639,28 @@ if barstate.islast
         mondaym_limit_right = get_limit_right(DEFAULT_EXTEND_RIGHT)
         mondaym_open = (monday_high + monday_low) / 2
         var mondaym_line = line.new(x1=monday_time,x2=mondaym_limit_right,y1=mondaym_open,y2=mondaym_open,color=MondayColor,width=DEFAULT_LINE_WIDTH, xloc=xloc.bar_time, style=linestyles)
-        var mondaym_label = label.new(x=mondaym_limit_right,y=mondaym_open,color=label_color_setting,text=pmonmtext+ ": " + str.tostring(mondaym_open, format_level ), style=DEFAULT_LABEL_STYLE, textcolor=MondayColor,   xloc=xloc.bar_time)
+        var mondaym_label = label.new(x=mondaym_limit_right,y=mondaym_open,color=label_color_setting,text=pmonmtext+ ": " + str.tostring(mondaym_open, format_level ), color=label_color_setting, textcolor=label_text_color_setting, size=label_text_font_size, style=DEFAULT_LABEL_STYLE,xloc=xloc.bar_time)
         if mergebool
             f_LevelMerge(pricearray, labelarray, mondaym_open, mondaym_label, MondayColor)
 ///////////////////////////////////////// DAILY OPEN ///////////////////////////////////////
     if is_daily_open_enabled
         daily_limit_right = get_limit_right(DEFAULT_EXTEND_RIGHT)
         var daily_line = line.new(x1=daily_time, x2=daily_limit_right, y1=daily_open, y2=daily_open,color=DailyColor,width=DEFAULT_LINE_WIDTH,xloc=xloc.bar_time,style=linestyles)
-        var daily_label = label.new(x=daily_limit_right, y=daily_open, text=dotext+ ": " + str.tostring(daily_open,format_level ),color=label_color_setting,style=DEFAULT_LABEL_STYLE,textcolor=DailyColor,xloc=xloc.bar_time)
+        var daily_label = label.new(x=daily_limit_right, y=daily_open, text=dotext+ ": " + str.tostring(daily_open,format_level ), color=label_color_setting, textcolor=label_text_color_setting, size=label_text_font_size, style=DEFAULT_LABEL_STYLE,xloc=xloc.bar_time)
         if mergebool
             f_LevelMerge(pricearray, labelarray, daily_open, daily_label, DailyColor)
 
     if is_daily_high_enabled
         dailyh_limit_right = get_limit_right(DEFAULT_EXTEND_RIGHT)
         var dailyh_line = line.new(x1=dailyh_time,x2=dailyh_limit_right,y1=dailyh_open,y2=dailyh_open, color=DailyColor, width=DEFAULT_LINE_WIDTH,xloc=xloc.bar_time,style=linestyles)
-        var dailyh_label = label.new(x=dailyh_limit_right,y=dailyh_open,color=label_color_setting, text=pdhtext+ ": " + str.tostring(dailyh_open,format_level),style=DEFAULT_LABEL_STYLE,textcolor=DailyColor,xloc=xloc.bar_time)
+        var dailyh_label = label.new(x=dailyh_limit_right,y=dailyh_open,color=label_color_setting, text=pdhtext+ ": " + str.tostring(dailyh_open,format_level), color=label_color_setting, textcolor=label_text_color_setting, size=label_text_font_size, style=DEFAULT_LABEL_STYLE,xloc=xloc.bar_time)
         if mergebool
             f_LevelMerge(pricearray, labelarray, dailyh_open, dailyh_label, DailyColor)
 
     if is_daily_low_enabled
         dailyl_limit_right = get_limit_right(DEFAULT_EXTEND_RIGHT)
         var dailyl_line = line.new(x1=dailyl_time, x2=dailyl_limit_right, y1=dailyl_open, y2=dailyl_open, color=DailyColor, width=DEFAULT_LINE_WIDTH, xloc=xloc.bar_time, style=linestyles)
-        var dailyl_label = label.new(x=dailyl_limit_right, y=dailyl_open, text=pdltext+ ": " + str.tostring(dailyl_open, format_level ),color=label_color_setting,style=DEFAULT_LABEL_STYLE, textcolor=DailyColor,   xloc=xloc.bar_time)
+        var dailyl_label = label.new(x=dailyl_limit_right, y=dailyl_open, text=pdltext+ ": " + str.tostring(dailyl_open, format_level ), color=label_color_setting, textcolor=label_text_color_setting, size=label_text_font_size, style=DEFAULT_LABEL_STYLE,xloc=xloc.bar_time)
         if mergebool
             f_LevelMerge(pricearray, labelarray, dailyl_open, dailyl_label, DailyColor)
 
@@ -634,24 +670,24 @@ if barstate.islast
         dailym_open = (dailyl_open + dailyh_open) / 2
         // 昨天(最高 + 最低)/2
         var dailym_line = line.new(x1=dailym_time, x2=dailym_limit_right, y1=dailym_open, y2=dailym_open, color=DailyColor, width=DEFAULT_LINE_WIDTH, xloc=xloc.bar_time, style=linestyles)
-        var dailym_label = label.new(x=dailym_limit_right, y=dailym_open, text=pdmtext+ ": " + str.tostring(dailym_open, format_level ) ,color=label_color_setting,textcolor=DailyColor, color=label_color_setting,  xloc=xloc.bar_time)
+        var dailym_label = label.new(x=dailym_limit_right, y=dailym_open, text=pdmtext+ ": " + str.tostring(dailym_open, format_level ) , color=label_color_setting, textcolor=label_text_color_setting, size=label_text_font_size, style=DEFAULT_LABEL_STYLE,xloc=xloc.bar_time)
         if mergebool
             f_LevelMerge(pricearray, labelarray, dailym_open, dailym_label, DailyColor)
 
     // 日线
     if enablelastdailyLower
         var lastdailyLower_line = line.new(x1=lastdailyStart,y1=lastdailyLower,x2=right_bar,y2=lastdailyLower, color=lastdailyColor, width=DEFAULT_LINE_WIDTH, style=linestyles)
-        var lastdailyLower_label = label.new(x=right_bar,y=lastdailyLower,text="pdval:"+ str.tostring(lastdailyLower, format_level ),color=label_color_setting,textcolor=#0c0c0c,style=label_style, xloc=xloc.bar_index)
+        var lastdailyLower_label = label.new(x=right_bar,y=lastdailyLower,text="pdval:"+ str.tostring(lastdailyLower, format_level ), color=label_color_setting, textcolor=label_text_color_setting, size=label_text_font_size, style=DEFAULT_LABEL_STYLE,xloc=xloc.bar_index)
         if mergebool
             f_LevelMerge(pricearray,labelarray,lastdailyLower,lastdailyLower_label,lastdailyColor)
     if enablelastdailyUpper
         var lastdailyUpper_line = line.new(x1=lastdailyStart, y1=lastdailyUpper, x2=right_bar,  y2=lastdailyUpper, color=lastdailyColor,width=DEFAULT_LINE_WIDTH, style=linestyles)
-        var lastdailyUpper_label = label.new(x=right_bar,y=lastdailyUpper, text="pdvah:"+ str.tostring(lastdailyUpper,format_level ), color=label_color_setting,textcolor=#0c0c0c,style=label_style, xloc=xloc.bar_index)
+        var lastdailyUpper_label = label.new(x=right_bar,y=lastdailyUpper, text="pdvah:"+ str.tostring(lastdailyUpper,format_level ), color=label_color_setting, textcolor=label_text_color_setting, size=label_text_font_size, style=DEFAULT_LABEL_STYLE,xloc=xloc.bar_index)
         if mergebool
             f_LevelMerge(pricearray,labelarray,lastdailyUpper,lastdailyUpper_label,lastdailyColor)
     if enablelastdailyPOC
         var lastdailyPOC_line = line.new(x1=lastdailyStart,y1=lastdailyPOC,x2=right_bar,y2=lastdailyPOC, color=lastdailyColor,width=DEFAULT_LINE_WIDTH,style=linestyles)
-        var lastdailyPOC_label = label.new(x=right_bar,y=lastdailyPOC,text="pdpoc:"+ str.tostring(lastdailyPOC,format_level ), color=label_color_setting,textcolor=#0c0c0c,style=label_style, xloc=xloc.bar_index)
+        var lastdailyPOC_label = label.new(x=right_bar,y=lastdailyPOC,text="pdpoc:"+ str.tostring(lastdailyPOC,format_level ), color=label_color_setting, textcolor=label_text_color_setting, size=label_text_font_size, style=DEFAULT_LABEL_STYLE,xloc=xloc.bar_index)
         if mergebool
             f_LevelMerge(pricearray,labelarray,lastdailyPOC,lastdailyPOC_label,lastdailyColor)
 
@@ -660,85 +696,87 @@ if barstate.islast
         weekly_limit_right = get_limit_right(DEFAULT_EXTEND_RIGHT)
         cweekly_time = weekly_time
         var weekly_line = line.new(x1=cweekly_time, x2=weekly_limit_right, y1=weekly_open, y2=weekly_open, color=WeeklyColor, width=DEFAULT_LINE_WIDTH, xloc=xloc.bar_time, style=linestyles)
-        var weekly_label = label.new(x=weekly_limit_right, y=weekly_open, text=wotext+ ": " + str.tostring(weekly_open, format_level ), color=label_color_setting,style=DEFAULT_LABEL_STYLE,textcolor=WeeklyColor,xloc=xloc.bar_time)
+        var weekly_label = label.new(x=weekly_limit_right, y=weekly_open, text=wotext+ ": " + str.tostring(weekly_open, format_level ), color=label_color_setting, textcolor=label_text_color_setting, size=label_text_font_size, style=DEFAULT_LABEL_STYLE,xloc=xloc.bar_time)
         if mergebool
             f_LevelMerge(pricearray, labelarray, weekly_open, weekly_label, WeeklyColor)
     if is_weekly_high_enabled
         weeklyh_limit_right = get_limit_right(DEFAULT_EXTEND_RIGHT)
         var weeklyh_line = line.new(x1=weeklyh_time, x2=weeklyh_limit_right, y1=weeklyh_open, y2=weeklyh_open, color=WeeklyColor,width=DEFAULT_LINE_WIDTH,xloc=xloc.bar_time, style=linestyles)
-        var weeklyh_label = label.new(x=weeklyh_limit_right, y=weeklyh_open, text=pwhtext+ ": " + str.tostring(weeklyh_open,format_level),color=label_color_setting,style=DEFAULT_LABEL_STYLE, textcolor=WeeklyColor,   xloc=xloc.bar_time)
+        var weeklyh_label = label.new(x=weeklyh_limit_right, y=weeklyh_open, text=pwhtext+ ": " + str.tostring(weeklyh_open,format_level), color=label_color_setting, textcolor=label_text_color_setting, size=label_text_font_size, style=DEFAULT_LABEL_STYLE,xloc=xloc.bar_time)
         if mergebool
             f_LevelMerge(pricearray, labelarray, weeklyh_open, weeklyh_label, WeeklyColor)
     if is_weekly_low_enabled
         weeklyl_limit_right = get_limit_right(DEFAULT_EXTEND_RIGHT)
-        var weeklyl_line = line.new(x1=weeklyl_time, x2=weeklyl_limit_right, y1=weekly_open, y2=weekly_open, color=WeeklyColor, width=DEFAULT_LINE_WIDTH, xloc=xloc.bar_time, style=linestyles)
-        var weeklyl_label = label.new(x=weeklyl_limit_right, y=weeklyl_open,color=label_color_setting, text=pwltext+ ": " + str.tostring(weeklyl_open, format_level ), style=DEFAULT_LABEL_STYLE, textcolor=WeeklyColor,   xloc=xloc.bar_time)
+        var weeklyl_line = line.new(x1=weeklyl_time, x2=weeklyl_limit_right, y1=weeklyl_open, y2=weeklyl_open, color=WeeklyColor, width=DEFAULT_LINE_WIDTH, xloc=xloc.bar_time, style=linestyles)
+        var weeklyl_label = label.new(x=weeklyl_limit_right, y=weeklyl_open,color=label_color_setting, text=pwltext+ ": " + str.tostring(weeklyl_open, format_level ), color=label_color_setting,textcolor=label_text_color_setting,size=label_text_font_size,style=DEFAULT_LABEL_STYLE,xloc=xloc.bar_time)
         if mergebool
             f_LevelMerge(pricearray, labelarray, weeklyl_open, weeklyl_label, WeeklyColor)
+
     if is_weekly_mid_enabled
         weeklym_limit_right = get_limit_right(DEFAULT_EXTEND_RIGHT)
         weeklym_time = weeklyh_time
         weeklym_open = (weeklyl_open + weeklyh_open) / 2
-        var weeklym_line = line.new(x1=weeklym_time, x2=weeklym_limit_right, y1=weeklym_open, y2=weeklym_open, color=WeeklyColor, width=DEFAULT_LINE_WIDTH, xloc=xloc.bar_time, style=linestyles)
-        var weeklym_label = label.new(x=weeklym_limit_right, y=weeklym_open, color=label_color_setting, text=pwmtext+ ": " + str.tostring(weeklym_open, format_level ), style=DEFAULT_LABEL_STYLE, textcolor=WeeklyColor,   xloc=xloc.bar_time)
+        var weeklym_line = line.new(x1=weeklym_time, x2=weeklym_limit_right, y1=weeklym_open, y2=weeklym_open, color=WeeklyColor, width=DEFAULT_LINE_WIDTH, xloc=xloc.bar_time,style=linestyles)
+        var weeklym_label = label.new(x=weeklym_limit_right, y=weeklym_open, color=label_color_setting, text=pwmtext+ ": " + str.tostring(weeklym_open, format_level ),color=label_color_setting,textcolor=label_text_color_setting,size=label_text_font_size,style=DEFAULT_LABEL_STYLE,xloc=xloc.bar_time)
         if mergebool
             f_LevelMerge(pricearray, labelarray, weeklym_open, weeklym_label, WeeklyColor)
     if enablelastWeeklyLower
         var lastWeeklyLower_line = line.new(x1=lastWeeklyStart,y1=lastWeeklyLower,x2=right_bar,y2=lastWeeklyLower,color=lastWeeklyColor,width=DEFAULT_LINE_WIDTH, style=linestyles)
-        var lastWeeklyLower_label = label.new(x=right_bar, y=lastWeeklyLower,text="pwval:"+ str.tostring(lastWeeklyLower,format_level ),color=label_color_setting,textcolor=#0c0c0c,style=label_style,xloc=xloc.bar_index)
+        var lastWeeklyLower_label = label.new(x=right_bar, y=lastWeeklyLower,text="pwval:"+ str.tostring(lastWeeklyLower,format_level ), color=label_color_setting, textcolor=label_text_color_setting, size=label_text_font_size, style=DEFAULT_LABEL_STYLE,xloc=xloc.bar_index)
         if mergebool
             f_LevelMerge(pricearray,labelarray,lastWeeklyLower,lastWeeklyLower_label,lastWeeklyColor)
     if enablelastWeeklyUpper
         var lastWeeklyUpper_line = line.new(x1=lastWeeklyStart,y1=lastWeeklyUpper, x2=right_bar,y2=lastWeeklyUpper, color=lastWeeklyColor,width=DEFAULT_LINE_WIDTH,style=linestyles)
-        var lastWeeklyUpper_label = label.new(x=right_bar, y=lastWeeklyUpper,text="pwvah:"+str.tostring(lastWeeklyUpper,format_level ),color=label_color_setting,textcolor=#0c0c0c,style=label_style,xloc=xloc.bar_index)
+        var lastWeeklyUpper_label = label.new(x=right_bar, y=lastWeeklyUpper,text="pwvah:"+str.tostring(lastWeeklyUpper,format_level ), color=label_color_setting, textcolor=label_text_color_setting, size=label_text_font_size, style=DEFAULT_LABEL_STYLE,xloc=xloc.bar_index)
         if mergebool
             f_LevelMerge(pricearray,labelarray,lastWeeklyUpper,lastWeeklyUpper_label,lastWeeklyColor)
     if enablelastWeeklyPOC
         var lastWeeklyPOC_line = line.new(x1=lastWeeklyStart,x2=right_bar,y1=lastWeeklyPOC,y2=lastWeeklyPOC,color=lastWeeklyColor,width=DEFAULT_LINE_WIDTH,style=linestyles)
-        var lastWeeklyPOC_label = label.new(x=right_bar,y=lastWeeklyPOC, text="pwpoc:"+ str.tostring(lastWeeklyPOC,format_level ),color=label_color_setting,textcolor=#0c0c0c,style=label_style,xloc=xloc.bar_index)
+        var lastWeeklyPOC_label = label.new(x=right_bar,y=lastWeeklyPOC, text="pwpoc:"+ str.tostring(lastWeeklyPOC,format_level ), color=label_color_setting, textcolor=label_text_color_setting, size=label_text_font_size, style=DEFAULT_LABEL_STYLE,xloc=xloc.bar_index)
         if mergebool
             f_LevelMerge(pricearray,labelarray,lastWeeklyPOC,lastWeeklyPOC_label,lastWeeklyColor)
     if enablelastlastWeeklyLower
         var lastlastWeeklyLower_line = line.new(x1=lastlastWeeklyStart,y1=lastlastWeeklyLower, x2=right_bar,  y2=lastlastWeeklyLower, color=lastlastWeeklyColor,width=DEFAULT_LINE_WIDTH, style=linestyles)
-        var lastlastWeeklyLower_label = label.new(x=right_bar,y=lastlastWeeklyLower,text="ppwval:"+ str.tostring(lastlastWeeklyLower, format_level ),color=label_color_setting,textcolor=#0c0c0c, style=label_style,xloc=xloc.bar_index)
+        var lastlastWeeklyLower_label = label.new(x=right_bar,y=lastlastWeeklyLower,text="ppwval:"+ str.tostring(lastlastWeeklyLower, format_level ), color=label_color_setting, textcolor=label_text_color_setting, size=label_text_font_size, style=DEFAULT_LABEL_STYLE,xloc=xloc.bar_index)
         if mergebool
             f_LevelMerge(pricearray,labelarray,lastlastWeeklyLower,lastlastWeeklyLower_label,lastlastWeeklyColor)
     if enablelastlastWeeklyUpper
         var lastlastWeeklyUpper_line = line.new(x1=lastlastWeeklyStart,y1=lastlastWeeklyUpper,x2=right_bar,  y2=lastlastWeeklyUpper, color=lastlastWeeklyColor,width=DEFAULT_LINE_WIDTH,style=linestyles)
-        var lastlastWeeklyUpper_label = label.new(x=right_bar,y=lastlastWeeklyUpper, text="ppwvah:"+ str.tostring(lastlastWeeklyUpper,format_level ),color=label_color_setting,textcolor=#0c0c0c,style=label_style,xloc=xloc.bar_index)
+        var lastlastWeeklyUpper_label = label.new(x=right_bar,y=lastlastWeeklyUpper, text="ppwvah:"+ str.tostring(lastlastWeeklyUpper,format_level ), color=label_color_setting, textcolor=label_text_color_setting, size=label_text_font_size, style=DEFAULT_LABEL_STYLE,xloc=xloc.bar_index)
         if mergebool
             f_LevelMerge(pricearray,labelarray,lastlastWeeklyUpper,lastlastWeeklyUpper_label,lastlastWeeklyColor)
     if enablelastlastWeeklyPOC
         var lastlastWeeklyPOC_line = line.new(x1=lastlastWeeklyStart, y1=lastlastWeeklyPOC, x2=right_bar,  y2=lastlastWeeklyPOC, color=lastlastWeeklyColor,width=DEFAULT_LINE_WIDTH,style=linestyles)
-        var lastlastWeeklyPOC_label = label.new(x=right_bar,y=lastlastWeeklyPOC, text="ppwpoc:"+ str.tostring(lastlastWeeklyPOC,format_level ),color=label_color_setting,textcolor=#0c0c0c,style=label_style, xloc=xloc.bar_index)
+        var lastlastWeeklyPOC_label = label.new(x=right_bar,y=lastlastWeeklyPOC, text="ppwpoc:"+ str.tostring(lastlastWeeklyPOC,format_level ), color=label_color_setting, textcolor=label_text_color_setting, size=label_text_font_size, style=DEFAULT_LABEL_STYLE, xloc=xloc.bar_index)
         if mergebool
             f_LevelMerge(pricearray,labelarray,lastlastWeeklyPOC,lastlastWeeklyPOC_label,lastlastWeeklyColor)
     if enablecurrentWeeklyLower
         var currentWeeklyLower_line = line.new(x1=bar_index,x2=right_bar,y1=currentWeeklyLower,y2=currentWeeklyLower,color=currentWeeklyColor,width=DEFAULT_LINE_WIDTH)
-        var currentWeeklyLower_label = label.new(x=right_bar, y=currentWeeklyLower, text="wval:"+ str.tostring(currentWeeklyLower, format_level ),color=label_color_setting, textcolor=#0c0c0c, style=label_style,  xloc=xloc.bar_index)
+        var currentWeeklyLower_label = label.new(x=right_bar, y=currentWeeklyLower, text="wval:"+ str.tostring(currentWeeklyLower, format_level ), color=label_color_setting, textcolor=label_text_color_setting, size=label_text_font_size, style=DEFAULT_LABEL_STYLE, xloc=xloc.bar_index)
         if mergebool
             f_LevelMerge(pricearray,labelarray,currentWeeklyLower,currentWeeklyLower_label,currentWeeklyColor)
     if enablecurrentWeeklyPOC
         var currentWeeklyPOC_line = line.new(x1=bar_index, x2=right_bar,y1=currentWeeklyPOC, y2=currentWeeklyPOC,color=currentWeeklyColor, width=DEFAULT_LINE_WIDTH)
-        var currentWeeklyPOC_label = label.new(x=right_bar, y=currentWeeklyPOC, text="wpoc:"+ str.tostring(currentWeeklyPOC, format_level ), color=label_color_setting, textcolor=#0c0c0c, style=label_style,  xloc=xloc.bar_index)
+        var currentWeeklyPOC_label = label.new(x=right_bar, y=currentWeeklyPOC, text="wpoc:"+ str.tostring(currentWeeklyPOC, format_level ), color=label_color_setting, textcolor=label_text_color_setting, size=label_text_font_size, style=DEFAULT_LABEL_STYLE, xloc=xloc.bar_index)
         if mergebool
             f_LevelMerge(pricearray,labelarray,currentWeeklyPOC,currentWeeklyPOC_label,currentWeeklyColor)
     if enablecurrentWeeklyUpper
         var currentWeeklyUpper_line = line.new(x1=bar_index,x2=right_bar,y1=currentWeeklyUpper,y2=currentWeeklyUpper,color=currentWeeklyColor, width=DEFAULT_LINE_WIDTH)
-        var currentWeeklyUpper_label = label.new(x=right_bar,y=currentWeeklyUpper,text="wvah:"+str.tostring(currentWeeklyUpper,format_level), color=label_color_setting, textcolor=#0c0c0c, style=label_style,  xloc=xloc.bar_index)
+        var currentWeeklyUpper_label = label.new(x=right_bar,y=currentWeeklyUpper,text="wvah:"+str.tostring(currentWeeklyUpper,format_level),  color=label_color_setting, textcolor=label_text_color_setting, size=label_text_font_size, style=DEFAULT_LABEL_STYLE,xloc=xloc.bar_index)
         if mergebool
             f_LevelMerge(pricearray,labelarray,currentWeeklyUpper,currentWeeklyUpper_label,currentWeeklyColor)
+
 ///////////////////////////////////////// Monthly ///////////////////////////////////////
     if is_monthly_high_enabled
         monthlyh_limit_right = get_limit_right(DEFAULT_EXTEND_RIGHT)
         var monthlyh_line = line.new(x1=monthlyh_time, x2=monthlyh_limit_right, y1=monthlyh_open, y2=monthlyh_open, color=MonthlyColor, width=DEFAULT_LINE_WIDTH, xloc=xloc.bar_time, style=linestyles)
-        var monthlyh_label = label.new(x=monthlyh_limit_right, y=monthlyh_open, text=pmhtext+ ": " + str.tostring(monthlyh_open, format_level ), color=label_color_setting,style=DEFAULT_LABEL_STYLE, textcolor=MonthlyColor,   xloc=xloc.bar_time)
+        var monthlyh_label = label.new(x=monthlyh_limit_right, y=monthlyh_open, text=pmhtext+ ": " + str.tostring(monthlyh_open, format_level ), color=label_color_setting, textcolor=label_text_color_setting, size=label_text_font_size, style=DEFAULT_LABEL_STYLE,xloc=xloc.bar_time)
         if mergebool
             f_LevelMerge(pricearray, labelarray, monthlyh_open, monthlyh_label, MonthlyColor)
     if is_monthly_low_enabled
         monthlyl_limit_right = get_limit_right(DEFAULT_EXTEND_RIGHT)
         var monthlyl_line = line.new(x1=monthlyl_time, x2=monthlyl_limit_right, y1=monthlyl_open, y2=monthlyl_open, color=MonthlyColor, width=DEFAULT_LINE_WIDTH, xloc=xloc.bar_time, style=linestyles)
-        var monthlyl_label = label.new(x=monthlyl_limit_right, y=monthlyl_open, text=pmltext+ ": " + str.tostring(monthlyl_open, format_level ), style=DEFAULT_LABEL_STYLE, textcolor=MonthlyColor, color=label_color_setting,  xloc=xloc.bar_time)
+        var monthlyl_label = label.new(x=monthlyl_limit_right, y=monthlyl_open, text=pmltext+ ": " + str.tostring(monthlyl_open, format_level ), color=label_color_setting, textcolor=label_text_color_setting, size=label_text_font_size, style=DEFAULT_LABEL_STYLE, xloc=xloc.bar_time)
         if mergebool
             f_LevelMerge(pricearray, labelarray, monthlyl_open, monthlyl_label, MonthlyColor)
     if is_monthly_mid_enabled
@@ -746,79 +784,79 @@ if barstate.islast
         monthlym_time = monthlyh_time
         monthlym_open = (monthlyl_open + monthlyh_open) / 2
         var monthlym_line = line.new(x1=monthlym_time, x2=monthlym_limit_right, y1=monthlym_open, y2=monthlym_open, color=MonthlyColor, width=DEFAULT_LINE_WIDTH, xloc=xloc.bar_time, style=linestyles)
-        var monthlym_label = label.new(x=monthlym_limit_right, y=monthlym_open, text=pmmtext+ ": " + str.tostring(monthlym_open, format_level ), style=DEFAULT_LABEL_STYLE,color=label_color_setting, textcolor=MonthlyColor,   xloc=xloc.bar_time)
+        var monthlym_label = label.new(x=monthlym_limit_right, y=monthlym_open, text=pmmtext+ ": " + str.tostring(monthlym_open, format_level ), color=label_color_setting, textcolor=label_text_color_setting, size=label_text_font_size, style=DEFAULT_LABEL_STYLE,xloc=xloc.bar_time)
         if mergebool
             f_LevelMerge(pricearray, labelarray, monthlym_open, monthlym_label, MonthlyColor)
     if is_monthly_open_enabled
         monthly_limit_right = get_limit_right(DEFAULT_EXTEND_RIGHT)
         var monthlyLine = line.new(x1=monthly_time, x2=monthly_limit_right, y1=monthly_open, y2=monthly_open, color=MonthlyColor, width=DEFAULT_LINE_WIDTH, xloc=xloc.bar_time, style=linestyles)
-        var monthlyLabel = label.new(x=monthly_limit_right, y=monthly_open, text=motext+ ": " + str.tostring(monthly_open, format_level ), style=DEFAULT_LABEL_STYLE, textcolor=MonthlyColor,   color=label_color_setting,xloc=xloc.bar_time)
+        var monthlyLabel = label.new(x=monthly_limit_right, y=monthly_open, text=motext+ ": " + str.tostring(monthly_open, format_level ), color=label_color_setting, textcolor=label_text_color_setting, size=label_text_font_size, style=DEFAULT_LABEL_STYLE,xloc=xloc.bar_time)
         if mergebool
             f_LevelMerge(pricearray, labelarray, monthly_open, monthlyLabel, MonthlyColor)
     if enablelastMonthlyLower
         var lastMonthlyLower_line = line.new(x1=lastMonthlyStart,x2=right_bar,y1=lastMonthlyLower,y2=lastMonthlyLower, color=lastMonthlyColor,width=DEFAULT_LINE_WIDTH,style=linestyles)
-        var lastMonthlyLower_label = label.new(x=right_bar, y=lastMonthlyLower,text="pmval:"+ str.tostring(lastMonthlyLower,format_level ),color=label_color_setting, textcolor=#0c0c0c, style=label_style,  xloc=xloc.bar_index)
+        var lastMonthlyLower_label = label.new(x=right_bar, y=lastMonthlyLower,text="pmval:"+ str.tostring(lastMonthlyLower,format_level ), color=label_color_setting, textcolor=label_text_color_setting, size=label_text_font_size, style=DEFAULT_LABEL_STYLE,xloc=xloc.bar_index)
         if mergebool
             f_LevelMerge(pricearray, labelarray,lastMonthlyLower, lastMonthlyLower_label, lastMonthlyColor)
     if enablelastMonthlyUpper
         var lastMonthlyUpper_line =  line.new(x1=lastMonthlyStart,x2=right_bar,y1=lastMonthlyUpper,y2=lastMonthlyUpper,color=lastMonthlyColor,width=DEFAULT_LINE_WIDTH,style=linestyles)
-        var lastMonthlyUpper_label = label.new(x=right_bar,y=lastMonthlyUpper,text="pmvah:"+ str.tostring(lastMonthlyUpper,format_level ),color=label_color_setting, textcolor=#0c0c0c, style=label_style,  xloc=xloc.bar_index)
+        var lastMonthlyUpper_label = label.new(x=right_bar,y=lastMonthlyUpper,text="pmvah:"+ str.tostring(lastMonthlyUpper,format_level ), color=label_color_setting, textcolor=label_text_color_setting, size=label_text_font_size, style=DEFAULT_LABEL_STYLE,xloc=xloc.bar_index)
         if mergebool
             f_LevelMerge(pricearray, labelarray,lastMonthlyUpper, lastMonthlyUpper_label, lastMonthlyColor)
     if enablelastMonthlyPOC
         //init_right = get_limit_right(DEFAULT_EXTEND_RIGHT)
         var lastMonthlyPOC_line = line.new(x1=lastMonthlyStart,x2=right_bar, y1=lastMonthlyPOC,  y2=lastMonthlyPOC, color=lastMonthlyColor,width=DEFAULT_LINE_WIDTH, style=linestyles)
-        var lastMonthlyPOC_label = label.new(x=right_bar,y=lastMonthlyPOC,text="pmpoc:"+ str.tostring(lastMonthlyPOC,format_level ),color=label_color_setting, textcolor=#0c0c0c, style=label_style,  xloc=xloc.bar_index)
+        var lastMonthlyPOC_label = label.new(x=right_bar,y=lastMonthlyPOC,text="pmpoc:"+ str.tostring(lastMonthlyPOC,format_level ), color=label_color_setting, textcolor=label_text_color_setting, size=label_text_font_size, style=DEFAULT_LABEL_STYLE,xloc=xloc.bar_index)
         if mergebool
             f_LevelMerge(pricearray, labelarray,lastMonthlyPOC, lastMonthlyPOC_label, lastMonthlyColor)
     if enablelastlastMonthlyLower
         var lastlastMonthlyLower_line = line.new(x1=lastlastMonthlyStart, y1=lastlastMonthlyLower, x2=right_bar,  y2=lastlastMonthlyLower, color=lastlastMonthlyColor,width=DEFAULT_LINE_WIDTH, style=linestyles)
-        var lastlastMonthlyLower_label = label.new(x=right_bar,y=lastlastMonthlyLower,  text="ppmval:"+ str.tostring(lastlastMonthlyLower, format_level ),color=label_color_setting, textcolor=#0c0c0c, style=label_style,  xloc=xloc.bar_index)
+        var lastlastMonthlyLower_label = label.new(x=right_bar,y=lastlastMonthlyLower,  text="ppmval:"+ str.tostring(lastlastMonthlyLower, format_level ), color=label_color_setting, textcolor=label_text_color_setting, size=label_text_font_size, style=DEFAULT_LABEL_STYLE, xloc=xloc.bar_index)
         if mergebool
             f_LevelMerge(pricearray, labelarray,lastlastMonthlyLower,lastlastMonthlyLower_label, lastlastMonthlyColor)
     if enablelastlastMonthlyUpper
         var lastlastMonthlyUpper_line = line.new(x1=lastlastMonthlyStart, y1=lastlastMonthlyUpper, x2=right_bar,  y2=lastlastMonthlyUpper, color=lastlastMonthlyColor,width=DEFAULT_LINE_WIDTH, style=linestyles)
-        var lastlastMonthlyUpper_label = label.new(x=right_bar,y=lastlastMonthlyUpper,text="ppmvah:"+str.tostring(lastlastMonthlyUpper,format_level ),color=label_color_setting, textcolor=#0c0c0c, style=label_style,  xloc=xloc.bar_index)
+        var lastlastMonthlyUpper_label = label.new(x=right_bar,y=lastlastMonthlyUpper,text="ppmvah:"+str.tostring(lastlastMonthlyUpper,format_level ), color=label_color_setting, textcolor=label_text_color_setting, size=label_text_font_size, style=DEFAULT_LABEL_STYLE, xloc=xloc.bar_index)
         if mergebool
             f_LevelMerge(pricearray, labelarray,lastlastMonthlyUpper,lastlastMonthlyUpper_label, lastlastMonthlyColor)
     if enablelastlastMonthlyPOC
         var lastlastMonthlyPOC_line = line.new(x1=lastlastMonthlyStart, y1=lastlastMonthlyPOC, x2=right_bar,  y2=lastlastMonthlyPOC, color=lastlastMonthlyColor,width=DEFAULT_LINE_WIDTH, style=linestyles)
-        var lastlastMonthlyPOC_label = label.new(x=right_bar,  y=lastlastMonthlyPOC, text="ppmpoc:"+ str.tostring(lastlastMonthlyPOC,format_level ),color=label_color_setting, textcolor=#0c0c0c, style=label_style,  xloc=xloc.bar_index)
+        var lastlastMonthlyPOC_label = label.new(x=right_bar,  y=lastlastMonthlyPOC, text="ppmpoc:"+ str.tostring(lastlastMonthlyPOC,format_level ), color=label_color_setting, textcolor=label_text_color_setting, size=label_text_font_size, style=DEFAULT_LABEL_STYLE,xloc=xloc.bar_index)
         if mergebool
             f_LevelMerge(pricearray,labelarray,lastlastMonthlyPOC,lastlastMonthlyPOC_label,lastlastMonthlyColor)
     if enablecurrentMonthlyLower
         var currentMonthlyLower_line = line.new(x1=bar_index,x2=right_bar, y1=currentMonthlyLower,y2=currentMonthlyLower,color=currentMonthlyColor, width=DEFAULT_LINE_WIDTH, style=linestyles)
-        var currentMonthlyLower_label = label.new(x=right_bar, y=currentMonthlyLower, text="mval:"+ str.tostring(currentMonthlyLower, format_level ), color=label_color_setting, textcolor=#0c0c0c, style=label_style,  xloc=xloc.bar_index)
+        var currentMonthlyLower_label = label.new(x=right_bar, y=currentMonthlyLower, text="mval:"+ str.tostring(currentMonthlyLower, format_level ), color=label_color_setting, textcolor=label_text_color_setting, size=label_text_font_size, style=DEFAULT_LABEL_STYLE,style=DEFAULT_LABEL_STYLE,  xloc=xloc.bar_index)
         if mergebool
             f_LevelMerge(pricearray,labelarray,currentMonthlyLower,currentMonthlyLower_label,currentMonthlyColor)
     if enablecurrentMonthlyPOC
         var currentMonthlyPOC_line = line.new(x1=bar_index,x2=right_bar, y1=currentMonthlyPOC,y2=currentMonthlyPOC,color=currentMonthlyColor, width=DEFAULT_LINE_WIDTH, style=linestyles)
-        var currentMonthlyPOC_label = label.new(x=right_bar, y=currentMonthlyPOC,text="mpoc:"+ str.tostring(currentMonthlyPOC, format_level ),  color=label_color_setting, textcolor=#0c0c0c, style=label_style,  xloc=xloc.bar_index)
+        var currentMonthlyPOC_label = label.new(x=right_bar, y=currentMonthlyPOC,text="mpoc:"+ str.tostring(currentMonthlyPOC, format_level ), color=label_color_setting, textcolor=label_text_color_setting, size=label_text_font_size, style=DEFAULT_LABEL_STYLE,xloc=xloc.bar_index)
         if mergebool
             f_LevelMerge(pricearray,labelarray,currentMonthlyPOC, currentMonthlyPOC_label, currentMonthlyColor)
     if enablecurrentMonthlyUpper
         var currentMonthlyUpper_line = line.new(x1=bar_index,x2=right_bar, y1=currentMonthlyUpper,y2=currentMonthlyUpper,color=currentMonthlyColor,width=DEFAULT_LINE_WIDTH, style=linestyles)
-        var currentMonthlyUpper_label =label.new(x=right_bar, y=currentMonthlyUpper, text="mvah:"+ str.tostring(currentMonthlyUpper, format_level ), color=label_color_setting, textcolor=#0c0c0c, style=label_style,  xloc=xloc.bar_index)
+        var currentMonthlyUpper_label =label.new(x=right_bar, y=currentMonthlyUpper, text="mvah:"+ str.tostring(currentMonthlyUpper, format_level ), color=label_color_setting, textcolor=label_text_color_setting, size=label_text_font_size, style=DEFAULT_LABEL_STYLE,xloc=xloc.bar_index)
         if mergebool
             f_LevelMerge(pricearray,labelarray,currentMonthlyUpper,currentMonthlyUpper_label, currentMonthlyColor)
 
 ///////////////////////////////////////// Yearly ///////////////////////////////////////
     if is_yearly_low_enabled
         yearlyl_limit_right = get_limit_right(DEFAULT_EXTEND_RIGHT)
-        var yearlyl_line = line.new(x1=yearlyl_time, x2=yearlyl_limit_right, y1=yearlyl_open, y2=yearlyl_open, color=YearlyColor,xloc=xloc.bar_time,width=DEFAULT_LINE_WIDTH, style=linestyles)
-        var yearlyl_label = label.new(x=yearlyl_limit_right,y=yearlyl_open,color=label_color_setting,text=cyltext+ ": " + str.tostring(yearlyl_open, format_level ), style=DEFAULT_LABEL_STYLE, textcolor=YearlyColor,   xloc=xloc.bar_time)
+        var yearlyl_line  = line.new(x1=yearlyl_time, x2=yearlyl_limit_right, y1=yearlyl_open, y2=yearlyl_open, color=YearlyColor,xloc=xloc.bar_time,width=DEFAULT_LINE_WIDTH, style=linestyles)
+        var yearlyl_label = label.new(x=yearlyl_limit_right,y=yearlyl_open,color=label_color_setting,text=cyltext+ ": " + str.tostring(yearlyl_open, format_level ), color=label_color_setting, textcolor=label_text_color_setting, size=label_text_font_size, style=DEFAULT_LABEL_STYLE,xloc=xloc.bar_time)
         if mergebool
             f_LevelMerge(pricearray, labelarray, yearlyl_open, yearlyl_label, YearlyColor)
     if is_yearly_high_enabled
         yearlyh_limit_right = get_limit_right(DEFAULT_EXTEND_RIGHT)
         var yearlyh_line = line.new(x1=yearlyh_time,x2=yearlyh_limit_right,y1=yearlyh_open,y2=yearlyh_open,color=YearlyColor,  xloc=xloc.bar_time,width=DEFAULT_LINE_WIDTH, style=linestyles)
-        var yearlyh_label = label.new(x=yearlyh_limit_right,y=yearlyh_open,text=cyhtext+ ": "+str.tostring(yearlyh_open, format_level ), color=label_color_setting,style=DEFAULT_LABEL_STYLE, textcolor=YearlyColor,   xloc=xloc.bar_time)
+        var yearlyh_label = label.new(x=yearlyh_limit_right,y=yearlyh_open,text=cyhtext+ ": "+str.tostring(yearlyh_open, format_level ), color=label_color_setting, textcolor=label_text_color_setting, size=label_text_font_size, style=DEFAULT_LABEL_STYLE,xloc=xloc.bar_time)
         if mergebool
             f_LevelMerge(pricearray,labelarray,yearlyh_open,yearlyh_label,YearlyColor)
     if is_yearly_open_enabled
         yearly_limit_right = get_limit_right(DEFAULT_EXTEND_RIGHT)
         var yearly_line = line.new(x1=yearly_time,x2=yearly_limit_right,y1=yearly_open,y2=yearly_open,color=YearlyColor,  xloc=xloc.bar_time, width=DEFAULT_LINE_WIDTH, style=linestyles)
-        var yearly_label = label.new(x=yearly_limit_right, y=yearly_open,text=yotext+ ": " + str.tostring(yearly_open, format_level ), style=DEFAULT_LABEL_STYLE, color=label_color_setting,textcolor=YearlyColor,   xloc=xloc.bar_time)
+        var yearly_label = label.new(x=yearly_limit_right, y=yearly_open,text=yotext+ ": " + str.tostring(yearly_open, format_level ),color=label_color_setting, textcolor=label_text_color_setting,size=label_text_font_size,style=DEFAULT_LABEL_STYLE,xloc=xloc.bar_time)
         if mergebool
             f_LevelMerge(pricearray,labelarray,yearly_open,yearly_label,YearlyColor)
     if is_yearly_mid_enabled
@@ -826,52 +864,52 @@ if barstate.islast
         yearlym_time = yearlyh_time
         yearlym_open = (yearlyl_open + yearlyh_open) / 2
         var yearlym_line = line.new(x1=yearlym_time, x2=yearlym_limit_right, y1=yearlym_open, y2=yearlym_open, color=YearlyColor, xloc=xloc.bar_time,width=DEFAULT_LINE_WIDTH, style=linestyles)
-        var yearlym_label = label.new(x=yearlym_limit_right, y=yearlym_open, text=cymtext+ ": " + str.tostring(yearlym_open, format_level ),  color=label_color_setting,style=DEFAULT_LABEL_STYLE, textcolor=YearlyColor,   xloc=xloc.bar_time)
+        var yearlym_label = label.new(x=yearlym_limit_right, y=yearlym_open, text=cymtext+ ": " + str.tostring(yearlym_open, format_level ),color=label_color_setting, textcolor=label_text_color_setting, size=label_text_font_size, style=DEFAULT_LABEL_STYLE,xloc=xloc.bar_index)
         if mergebool
             f_LevelMerge(pricearray, labelarray, yearlym_open, yearlym_label, YearlyColor)
     if enablelastYearlyLower
         var lastYearlyLower_line = line.new(x1=lastYearlyStart, y1=lastYearlyLower, x2=bar_index, y2=lastYearlyLower, color=lastYearlyColor,width=DEFAULT_LINE_WIDTH, style=linestyles)
-        var lastYearlyLower_label = label.new(x=right_bar, y=lastYearlyLower,  text="pyval:" + str.tostring(lastYearlyLower,format_level  ),color=label_color_setting,textcolor=#0c0c0c,style=label_style,xloc=xloc.bar_index)
+        var lastYearlyLower_label = label.new(x=right_bar, y=lastYearlyLower,  text="pyval:" + str.tostring(lastYearlyLower,format_level  ), color=label_color_setting, textcolor=label_text_color_setting, size=label_text_font_size, style=DEFAULT_LABEL_STYLE,xloc=xloc.bar_index)
         if mergebool
             f_LevelMerge(pricearray, labelarray, lastYearlyLower, lastYearlyLower_label, lastYearlyColor)
     if enablelastYearlyUpper
         var lastYearlyUpper_line = line.new(x1=lastYearlyStart, y1=lastYearlyUpper, x2=bar_index, y2=lastYearlyUpper, color=lastYearlyColor,width=DEFAULT_LINE_WIDTH, style=linestyles)
-        var lastYearlyUpper_label = label.new(x=right_bar, y=lastYearlyUpper,  text="pyvah:" + str.tostring(lastYearlyUpper, format_level ),color=label_color_setting, textcolor=#0c0c0c, style=label_style,  xloc=xloc.bar_index)
+        var lastYearlyUpper_label = label.new(x=right_bar, y=lastYearlyUpper,  text="pyvah:" + str.tostring(lastYearlyUpper, format_level ), color=label_color_setting, textcolor=label_text_color_setting, size=label_text_font_size, style=DEFAULT_LABEL_STYLE,xloc=xloc.bar_index)
         if mergebool
             f_LevelMerge(pricearray, labelarray, lastYearlyUpper, lastYearlyUpper_label, lastYearlyColor)
     if enablelastYearlyPOC
         var lastYearlyPOC_line = line.new(x1=lastYearlyStart, y1=lastYearlyPOC, x2=bar_index, y2=lastYearlyPOC, color=lastYearlyColor,width=DEFAULT_LINE_WIDTH, style=linestyles)
-        var lastYearlyPOC_label = label.new(x=right_bar,y=lastYearlyPOC, text="pypoc:"+ str.tostring(lastYearlyPOC,format_level ), color=label_color_setting, textcolor=#0c0c0c, style=label_style, xloc=xloc.bar_index)
+        var lastYearlyPOC_label = label.new(x=right_bar,y=lastYearlyPOC, text="pypoc:"+ str.tostring(lastYearlyPOC,format_level ), color=label_color_setting,textcolor=label_text_color_setting,size=label_text_font_size,style=DEFAULT_LABEL_STYLE,xloc=xloc.bar_index)
         if mergebool
             f_LevelMerge(pricearray,labelarray,lastYearlyUpper,lastYearlyPOC_label,lastYearlyColor)
     if enablelastlastYearlyLower
         var lastlastYearlyLower_line = line.new(x1=lastlastYearlyStart,y1=lastlastYearlyLower,x2=bar_index,y2=lastlastYearlyLower, color=lastlastYearlyColor,width=DEFAULT_LINE_WIDTH, style=linestyles)
-        var lastlastYearlyLower_label = label.new(x=right_bar,y=lastlastYearlyLower,text="pyval:" + str.tostring(lastlastYearlyLower,format_level),color=label_color_setting,textcolor=#0c0c0c,style=label_style,xloc=xloc.bar_index)
+        var lastlastYearlyLower_label = label.new(x=right_bar,y=lastlastYearlyLower,text="ppyval:" + str.tostring(lastlastYearlyLower,format_level), color=label_color_setting, textcolor=label_text_color_setting, size=label_text_font_size, style=DEFAULT_LABEL_STYLE,xloc=xloc.bar_index)
         if mergebool
             f_LevelMerge(pricearray, labelarray, lastlastYearlyLower,lastlastYearlyLower_label, lastlastYearlyColor)
     if enablelastlastYearlyUpper
         var lastlastYearlyUpper_line = line.new(x1=lastlastYearlyStart,y1=lastlastYearlyUpper, x2=bar_index, y2=lastlastYearlyUpper, color=lastlastYearlyColor,width=DEFAULT_LINE_WIDTH, style=linestyles)
-        var lastlastYearlyUpper_label = label.new(x=right_bar,y=lastlastYearlyUpper,  text="pyvah:" + str.tostring(lastlastYearlyUpper, format_level ), color=label_color_setting, textcolor=#0c0c0c, style=label_style,  xloc=xloc.bar_index)
+        var lastlastYearlyUpper_label = label.new(x=right_bar,y=lastlastYearlyUpper,  text="ppyvah:" + str.tostring(lastlastYearlyUpper, format_level ), color=label_color_setting, textcolor=label_text_color_setting, size=label_text_font_size, style=DEFAULT_LABEL_STYLE,xloc=xloc.bar_index)
         if mergebool
             f_LevelMerge(pricearray,labelarray,lastlastYearlyUpper,lastlastYearlyUpper_label, lastlastYearlyColor)
     if enablelastlastYearlyPOC
         var lastlastYearlyPOC_line = line.new(x1=lastlastYearlyStart,y1=lastlastYearlyPOC, x2=bar_index, y2=lastlastYearlyPOC, color=lastlastYearlyColor,width=DEFAULT_LINE_WIDTH, style=linestyles)
-        var lastlastYearlyPOC_label = label.new(x=right_bar,y=lastlastYearlyPOC, text="pypoc:"+ str.tostring(lastlastYearlyPOC,format_level ),color=label_color_setting, textcolor=#0c0c0c, style=label_style,  xloc=xloc.bar_index)
+        var lastlastYearlyPOC_label = label.new(x=right_bar,y=lastlastYearlyPOC, text="ppypoc:"+ str.tostring(lastlastYearlyPOC,format_level ), color=label_color_setting, textcolor=label_text_color_setting, size=label_text_font_size, style=DEFAULT_LABEL_STYLE,xloc=xloc.bar_index)
         if mergebool
             f_LevelMerge(pricearray,labelarray,lastlastYearlyPOC,lastlastYearlyPOC_label, lastlastYearlyColor)
     if enablecurrentyearlyLower
         var currentyearlyLower_line = line.new(x1=bar_index, y1=currentyearlyLower,x2=right_bar,y2=currentyearlyLower,color=currentyearlyColor,width=DEFAULT_LINE_WIDTH, style=linestyles)
-        var currentyearlyLower_label = label.new(x=right_bar, y=currentyearlyLower, text="yval:"+ str.tostring(currentyearlyLower,format_level), color=label_color_setting, textcolor=#0c0c0c, style=label_style,  xloc=xloc.bar_index)
+        var currentyearlyLower_label = label.new(x=right_bar, y=currentyearlyLower, text="yval:"+ str.tostring(currentyearlyLower,format_level), color=label_color_setting, textcolor=label_text_color_setting, size=label_text_font_size, style=DEFAULT_LABEL_STYLE,xloc=xloc.bar_index)
         if mergebool
             f_LevelMerge(pricearray,labelarray,currentyearlyLower,currentyearlyLower_label,currentyearlyColor)
     if enablecurrentyearlyPOC
         var currentyearlyPOC_line = line.new(x1=bar_index, y1=currentyearlyPOC,x2=right_bar, y2=currentyearlyPOC, color=currentyearlyColor,width=DEFAULT_LINE_WIDTH, style=linestyles)
-        var currentyearlyPOC_label = label.new(x=right_bar, y=currentyearlyPOC, text="ypoc:"+ str.tostring(currentyearlyPOC,format_level ), color=label_color_setting, textcolor=#0c0c0c, style=label_style,  xloc=xloc.bar_index)
+        var currentyearlyPOC_label = label.new(x=right_bar, y=currentyearlyPOC, text="ypoc:"+ str.tostring(currentyearlyPOC,format_level ), color=label_color_setting, textcolor=label_text_color_setting, size=label_text_font_size, style=DEFAULT_LABEL_STYLE,xloc=xloc.bar_index)
         if mergebool
             f_LevelMerge(pricearray,labelarray,currentyearlyPOC,currentyearlyPOC_label,currentyearlyColor)
     if enablecurrentyearlyUpper
         var currentyearlyUpper_line = line.new(x1=bar_index, y1=currentyearlyUpper,x2=right_bar,y2=currentyearlyUpper,color=currentyearlyColor,width=DEFAULT_LINE_WIDTH, style=linestyles)
-        var currentyearlyUpper_label = label.new(x=right_bar, y=currentyearlyUpper, text="yvah:"+ str.tostring(currentyearlyUpper, format_level ), color=label_color_setting, textcolor=#0c0c0c, style=label_style,  xloc=xloc.bar_index)
+        var currentyearlyUpper_label = label.new(x=right_bar, y=currentyearlyUpper, text="yvah:"+ str.tostring(currentyearlyUpper, format_level ), color=label_color_setting, textcolor=label_text_color_setting, size=label_text_font_size, style=DEFAULT_LABEL_STYLE,xloc=xloc.bar_index)
         if mergebool
             f_LevelMerge(pricearray,labelarray,currentyearlyUpper, currentyearlyUpper_label,currentyearlyColor)
 
@@ -879,76 +917,76 @@ if barstate.islast
     // 季度
     if enablelastQuarterlyLower
         var lastQuarterlyLower_line = line.new(x1=lastQuarterlyStart,x2=right_bar,y1=lastQuarterlyLower, y2=lastQuarterlyLower,color=lastQuarterlyColor,width=DEFAULT_LINE_WIDTH, style=linestyles)
-        var lastQuarterlyLower_label = label.new(x=right_bar, y=lastQuarterlyLower,text="pqval:"+str.tostring(lastQuarterlyLower, format_level ),color=label_color_setting, textcolor=#0c0c0c, style=label_style,  xloc=xloc.bar_index)
+        var lastQuarterlyLower_label = label.new(x=right_bar, y=lastQuarterlyLower,text="pqval:"+str.tostring(lastQuarterlyLower, format_level ),color=label_color_setting, textcolor=label_text_color_setting, size=label_text_font_size, style=DEFAULT_LABEL_STYLE,xloc=xloc.bar_index)
         if mergebool
             f_LevelMerge(pricearray, labelarray, lastQuarterlyLower, lastQuarterlyLower_label, lastQuarterlyColor)
     if enablelastQuarterlyUpper
         var lastQuarterlyUpper_line = line.new(x1=lastQuarterlyStart,x2=right_bar,y1=lastQuarterlyUpper,y2=lastQuarterlyUpper, color=lastQuarterlyColor,width=DEFAULT_LINE_WIDTH, style=linestyles)
-        var lastQuarterlyUpper_label = label.new(x=right_bar,y=lastQuarterlyUpper,text="pqvah:"+str.tostring(lastQuarterlyUpper, format_level ),color=label_color_setting, textcolor=#0c0c0c, style=label_style,  xloc=xloc.bar_index)
+        var lastQuarterlyUpper_label = label.new(x=right_bar,y=lastQuarterlyUpper,text="pqvah:"+str.tostring(lastQuarterlyUpper, format_level ),color=label_color_setting, textcolor=label_text_color_setting, size=label_text_font_size, style=DEFAULT_LABEL_STYLE,xloc=xloc.bar_index)
         if mergebool
             f_LevelMerge(pricearray, labelarray,lastQuarterlyUpper,lastQuarterlyUpper_label,lastQuarterlyColor)
     if enablelastQuarterlyPOC
         var lastQuarterlyPOC_line = line.new(x1=lastQuarterlyStart, x2=right_bar,y1=lastQuarterlyPOC,y2=lastQuarterlyPOC,  color=lastQuarterlyColor,width=DEFAULT_LINE_WIDTH, style=linestyles)
-        var lastQuarterlyPOC_label = label.new(x=right_bar,y=lastQuarterlyPOC,text="pqpoc:"+ str.tostring(lastQuarterlyPOC,format_level ),color=label_color_setting, textcolor=#0c0c0c, style=label_style,  xloc=xloc.bar_index)
+        var lastQuarterlyPOC_label = label.new(x=right_bar,y=lastQuarterlyPOC,text="pqpoc:"+ str.tostring(lastQuarterlyPOC,format_level ),color=label_color_setting, textcolor=label_text_color_setting, size=label_text_font_size, style=DEFAULT_LABEL_STYLE,xloc=xloc.bar_index)
         if mergebool
             f_LevelMerge(pricearray, labelarray, lastQuarterlyPOC, lastQuarterlyPOC_label, lastQuarterlyColor)
     if enablelastlastQuarterlyLower
         var lastlastQuarterlyLower_line = line.new(x1=lastlastQuarterlyStart, x2=right_bar,y1=lastlastQuarterlyLower,y2=lastlastQuarterlyLower,color=lastlastQuarterlyColor,width=DEFAULT_LINE_WIDTH, style=linestyles)
-        var lastlastQuarterlyLower_label = label.new(x=right_bar,  y=lastlastQuarterlyLower,  text="ppqval:"+ str.tostring(lastlastQuarterlyLower,format_level ),color=label_color_setting, textcolor=#0c0c0c, style=label_style,  xloc=xloc.bar_index)
+        var lastlastQuarterlyLower_label = label.new(x=right_bar,y=lastlastQuarterlyLower,text="ppqval:"+ str.tostring(lastlastQuarterlyLower,format_level ),color=label_color_setting, textcolor=label_text_color_setting, size=label_text_font_size, style=DEFAULT_LABEL_STYLE,xloc=xloc.bar_index)
         if mergebool
-            f_LevelMerge(pricearray, labelarray, lastlastQuarterlyLower, lastlastQuarterlyLower_label, lastlastQuarterlyColor)
+            f_LevelMerge(pricearray,labelarray,lastlastQuarterlyLower,lastlastQuarterlyLower_label,lastlastQuarterlyColor)
     if enablelastlastQuarterlyUpper
         var lastlastQuarterlyUpper_line = line.new(x1=lastlastQuarterlyStart,x2=right_bar,y1=lastlastQuarterlyUpper,y2=lastlastQuarterlyUpper,color=lastlastQuarterlyColor,width=DEFAULT_LINE_WIDTH, style=linestyles)
-        var lastlastQuarterlyUpper_label = label.new(x=right_bar,y=lastlastQuarterlyUpper,text="ppqvah:"+ str.tostring(lastlastQuarterlyUpper,format_level ),   color=label_color_setting, textcolor=#0c0c0c, style=label_style,  xloc=xloc.bar_index)
+        var lastlastQuarterlyUpper_label = label.new(x=right_bar,y=lastlastQuarterlyUpper,text="ppqvah:"+ str.tostring(lastlastQuarterlyUpper,format_level ),color=label_color_setting, textcolor=label_text_color_setting, size=label_text_font_size, style=DEFAULT_LABEL_STYLE,xloc=xloc.bar_index)
         if mergebool
             f_LevelMerge(pricearray, labelarray,lastlastQuarterlyUpper,lastlastQuarterlyUpper_label,lastlastQuarterlyColor)
     if enablelastlastQuarterlyPOC
-        var lastlastQuarterlyPOC_line = line.new(x1=lastlastQuarterlyStart,x2=right_bar,y1=lastlastQuarterlyPOC,y2=lastlastQuarterlyPOC,color=lastlastQuarterlyColor,width=DEFAULT_LINE_WIDTH, style=linestyles)
-        var lastlastQuarterlyPOC_label = label.new(x=right_bar,y=lastlastQuarterlyPOC, text="ppqpoc:"+ str.tostring(lastlastQuarterlyPOC,format_level),color=label_color_setting, textcolor=#0c0c0c, style=label_style,  xloc=xloc.bar_index)
+        var lastlastQuarterlyPOC_line = line.new(x1=lastlastQuarterlyStart,x2=right_bar,y1=lastlastQuarterlyPOC,y2=lastlastQuarterlyPOC,color=lastlastQuarterlyColor,width=DEFAULT_LINE_WIDTH,style=linestyles)
+        var lastlastQuarterlyPOC_label = label.new(x=right_bar,y=lastlastQuarterlyPOC, text="ppqpoc:"+ str.tostring(lastlastQuarterlyPOC,format_level),color=label_color_setting, textcolor=label_text_color_setting, size=label_text_font_size, style=DEFAULT_LABEL_STYLE,xloc=xloc.bar_index)
         if mergebool
             f_LevelMerge(pricearray, labelarray,lastlastQuarterlyPOC, lastlastQuarterlyPOC_label, lastlastQuarterlyColor)
     if enablecurrentQuarterlyLower
         var currentQuarterlyLower_line = line.new(x1=bar_index,x2=right_bar,y1=currentQuarterlyLower,y2=currentQuarterlyLower,color=currentQuarterlyColor,width=DEFAULT_LINE_WIDTH, style=linestyles)
-        var currentQuarterlyLower_label = label.new(x=right_bar,y=currentQuarterlyLower, text="qval:"+ str.tostring(currentQuarterlyLower,format_level ), color=label_color_setting, textcolor=#0c0c0c, style=label_style,  xloc=xloc.bar_index)
+        var currentQuarterlyLower_label = label.new(x=right_bar,y=currentQuarterlyLower, text="qval:"+ str.tostring(currentQuarterlyLower,format_level ), color=label_color_setting, textcolor=label_text_color_setting, size=label_text_font_size, style=DEFAULT_LABEL_STYLE,xloc=xloc.bar_index)
         if mergebool
             f_LevelMerge(pricearray,labelarray,currentQuarterlyLower,currentQuarterlyLower_label,currentWeeklyColor)
     if enablecurrentQuarterlyPOC
-        var currentQuarterlyPOC_line = line.new(x1=bar_index,x2=right_bar, y1=currentQuarterlyPOC, y2=currentQuarterlyPOC, color=currentQuarterlyColor,width=DEFAULT_LINE_WIDTH, style=linestyles)
-        var currentQuarterlyPOC_label = label.new(x=right_bar, y=currentQuarterlyPOC, text="qpoc:"+ str.tostring(currentQuarterlyPOC,format_level ), color=label_color_setting, textcolor=#0c0c0c, style=label_style,  xloc=xloc.bar_index)
+        var currentQuarterlyPOC_line = line.new(x1=bar_index,x2=right_bar, y1=currentQuarterlyPOC, y2=currentQuarterlyPOC, color=currentQuarterlyColor,width=DEFAULT_LINE_WIDTH,style=linestyles)
+        var currentQuarterlyPOC_label = label.new(x=right_bar, y=currentQuarterlyPOC, text="qpoc:"+ str.tostring(currentQuarterlyPOC,format_level ), color=label_color_setting, textcolor=label_text_color_setting, size=label_text_font_size, style=DEFAULT_LABEL_STYLE,xloc=xloc.bar_index)
         if mergebool
             f_LevelMerge(pricearray,labelarray,currentQuarterlyPOC,currentQuarterlyPOC_label,currentQuarterlyColor)
     if enablecurrentQuarterlyUpper
-        var currentQuarterlyUpper_line = line.new(x1=bar_index,x2=right_bar,y1=currentQuarterlyUpper,y2=currentQuarterlyUpper,color=currentQuarterlyColor,width=DEFAULT_LINE_WIDTH, style=linestyles)
-        var currentQuarterlyUpper_label = label.new(x=right_bar,y=currentQuarterlyUpper, text="qvah:"+ str.tostring(currentQuarterlyUpper, format_level ), color=label_color_setting, textcolor=#0c0c0c, style=label_style,  xloc=xloc.bar_index)
+        var currentQuarterlyUpper_line = line.new(x1=bar_index,x2=right_bar,y1=currentQuarterlyUpper,y2=currentQuarterlyUpper,color=currentQuarterlyColor,width=DEFAULT_LINE_WIDTH,style=linestyles)
+        var currentQuarterlyUpper_label = label.new(x=right_bar,y=currentQuarterlyUpper, text="qvah:"+ str.tostring(currentQuarterlyUpper, format_level ), color=label_color_setting, textcolor=label_text_color_setting, size=label_text_font_size, style=DEFAULT_LABEL_STYLE,xloc=xloc.bar_index)
         if mergebool
             f_LevelMerge(pricearray,labelarray,currentQuarterlyUpper,currentQuarterlyUpper_label,currentQuarterlyColor)
+
     if is_quarterly_open_enabled
         quarterly_limit_right = get_limit_right(DEFAULT_EXTEND_RIGHT)
         var quarterly_line = line.new(x1=quarterly_time,x2=quarterly_limit_right, y1=quarterly_open, y2=quarterly_open, color=quarterlyColor,xloc=xloc.bar_time,width=DEFAULT_LINE_WIDTH, style=linestyles)
-        var quarterly_label = label.new(x=quarterly_limit_right, y=quarterly_open,text=qotext+": " + str.tostring(quarterly_open, format_level ),color=label_color_setting,style=DEFAULT_LABEL_STYLE,textcolor=quarterlyColor,xloc=xloc.bar_time)
+        var quarterly_label = label.new(x=quarterly_limit_right, y=quarterly_open,text=qotext+": " + str.tostring(quarterly_open, format_level ), color=label_color_setting, textcolor=label_text_color_setting, size=label_text_font_size, style=DEFAULT_LABEL_STYLE,xloc=xloc.bar_time)
         if mergebool
             f_LevelMerge(pricearray, labelarray, quarterly_open, quarterly_label, quarterlyColor)
     if is_quarterly_high_enabled
         quarterlyh_limit_right = get_limit_right(DEFAULT_EXTEND_RIGHT)
         var quarterlyh_line = line.new(x1=quarterlyh_time, x2=quarterlyh_limit_right, y1=quarterlyh_open, y2=quarterlyh_open, color=quarterlyColor,  xloc=xloc.bar_time,width=DEFAULT_LINE_WIDTH, style=linestyles)
-        var quarterlyh_label = label.new(x=quarterlyh_limit_right, y=quarterlyh_open,color=label_color_setting, text=pqhtext+ ": " + str.tostring(quarterlyh_open, format_level ), style=DEFAULT_LABEL_STYLE, textcolor=quarterlyColor,   xloc=xloc.bar_time)
+        var quarterlyh_label = label.new(x=quarterlyh_limit_right, y=quarterlyh_open,color=label_color_setting, text=pqhtext+ ": " + str.tostring(quarterlyh_open, format_level ), color=label_color_setting, textcolor=label_text_color_setting, size=label_text_font_size, style=DEFAULT_LABEL_STYLE,xloc=xloc.bar_time)
         if mergebool
             f_LevelMerge(pricearray, labelarray, quarterlyh_open, quarterlyh_label, quarterlyColor)
     if is_quarterly_low_enabled
         quarterlyl_limit_right = get_limit_right(DEFAULT_EXTEND_RIGHT)
         var quarterlyl_line = line.new(x1=quarterlyl_time,x2=quarterlyl_limit_right,y1=quarterlyl_open,y2=quarterlyl_open,color=quarterlyColor, xloc=xloc.bar_time,width=DEFAULT_LINE_WIDTH, style=linestyles)
-        var quarterlyl_label = label.new(x=quarterlyl_limit_right,y=quarterlyl_open,color=label_color_setting,text=pqltext+ ": " + str.tostring(quarterlyl_open, format_level ), style=DEFAULT_LABEL_STYLE, textcolor=quarterlyColor,   xloc=xloc.bar_time)
+        var quarterlyl_label = label.new(x=quarterlyl_limit_right,y=quarterlyl_open,color=label_color_setting,text=pqltext+ ": " + str.tostring(quarterlyl_open, format_level ), color=label_color_setting, textcolor=label_text_color_setting, size=label_text_font_size, style=DEFAULT_LABEL_STYLE,xloc=xloc.bar_time)
         if mergebool
-            f_LevelMerge(pricearray, labelarray, quarterlyl_open, quarterlyl_label, quarterlyColor)
+            f_LevelMerge(pricearray,labelarray,quarterlyl_open,quarterlyl_label,quarterlyColor)
 
     if is_quarterly_mid_enabled
         quarterlym_limit_right = get_limit_right(DEFAULT_EXTEND_RIGHT)
         quarterlym_time = quarterlyh_time
         quarterlym_open = (quarterlyl_open + quarterlyh_open) / 2
-        var quarterlym_line = line.new(x1=quarterlym_time, x2=quarterlym_limit_right, y1=quarterlym_open, y2=quarterlym_open, color=quarterlyColor,xloc=xloc.bar_time,width=DEFAULT_LINE_WIDTH, style=linestyles)
-        var quarterlym_label = label.new(x=quarterlym_limit_right, y=quarterlym_open, text=pqmtext+ ": " + str.tostring(quarterlym_open, format_level ), style=DEFAULT_LABEL_STYLE, textcolor=quarterlyColor,color=label_color_setting,   xloc=xloc.bar_time)
+        var quarterlym_line = line.new(x1=quarterlym_time,x2=quarterlym_limit_right,y1=quarterlym_open,y2=quarterlym_open,color=quarterlyColor,xloc=xloc.bar_time,width=DEFAULT_LINE_WIDTH, style=linestyles)
+        var quarterlym_label = label.new(x=quarterlym_limit_right,y=quarterlym_open,text=pqmtext+ ": " + str.tostring(quarterlym_open, format_level ), color=label_color_setting, textcolor=label_text_color_setting, size=label_text_font_size, style=DEFAULT_LABEL_STYLE,xloc=xloc.bar_time)
         if mergebool
             f_LevelMerge(pricearray, labelarray, quarterlym_open, quarterlym_label, quarterlyColor)
 
 // ---------------------------------------------------------------------------------------------------------------------
-
